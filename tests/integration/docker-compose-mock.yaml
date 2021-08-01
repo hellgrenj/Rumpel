@@ -1,0 +1,19 @@
+version: '3'
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+  rumpel:
+    environment: 
+      - RUMPEL_PORT=8585
+    build: ../../src
+    command: --mock-provider --contract-path=./contracts/consumer-api.rumpel.contract.json
+    ports:
+      - '8585:8585'
+    volumes:
+    - ./contracts/:/app/contracts
+    depends_on:
+      - api
+
+ 

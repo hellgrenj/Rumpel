@@ -1,0 +1,17 @@
+version: '3'
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+  rumpel:
+    build: ../../src
+    command: --validate-contract --contract-path=./contracts/consumer-api.rumpel.contract.json --bearer-token=$BEARER_TOKEN
+    ports:
+      - '8181:8181'
+    volumes:
+    - ./contracts/:/app/contracts
+    depends_on:
+      - api
+
+ 
