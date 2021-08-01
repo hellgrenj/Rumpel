@@ -62,8 +62,3 @@ Run ALL tests in ./tests with ``deno run -A run_all_tests.ts``
 
 
 
-## License MIT
-
-add license text..
-
-
