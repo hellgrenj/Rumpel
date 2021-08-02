@@ -20,30 +20,43 @@ You can also use the contract on the consumer side to mock the provider in local
 ``./Rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
 ``./Rumpel --validate-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
 ``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``  
-### Rumpel can do three things: 
-- **Record a contract** (i.e turning your implicit contract into an explicit one).  
+### Rumpel can do **3** things:  
+<br/><br/>    
+
+ 1. **Record a contract** (i.e turning your implicit contract into an explicit one).  
+ <br/>
+**command**  
 ``./Rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
+**description**  
 ![./img/recording.jpg](./img/recording.jpg)   
-Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**  
-**screenshot**  
+Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**   
+**screenshot**   
 ![./img/recording.png](./img/recording.png)  
-- **Validate a contract** (i.e making sure the API still works for a specific consumer)  
+<br/><br/>
+2. **Validate a contract** (i.e making sure the API still works for a specific consumer)  
+<br/>
+**command**  
 ``./Rumpel --validate-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+**description**  
 ![./img/validating.jpg](./img/validating.jpg)     
 Validation mode supports bearer tokens and you can skip certain assertions with   **ignore-flags**.     
 Run the --help command for more information.   
 This should be a part of the Providers CI/CD pipeline, see ./tests/integration for an example on how to do this with docker-compose.  
 **screenshot**  
-![./img/validating.png](./img/validating.png) 
-- **Mock a provider/API**   
+![./img/validating.png](./img/validating.png)  
+<br/><br/>
+3. **Mock a provider/API**  
+<br/>
+**command**  
 ``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+**description**  
 ![./img/mocking.jpg](./img/mocking.jpg)  
 This can be used in local dev environments to mock dependencies, see ./tests/integration for an example on how to do this with docker-compose.  
 Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**.    
 In this mode Rumpel validates the requests sent by the consumer.  
 **screenshot**  
 ![./img/mocking.png](./img/mocking.png) 
-
+<br/><br/>
 ### Rumpel has 5 commands:
 
 ``--record-contract`` or the shorthand ``-r``  
