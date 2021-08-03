@@ -47,13 +47,12 @@ public class Validator
                     Printer.PrintOK($"✅ {trans.Request.Method} {trans.Request.Path}");
                 else
                 {
+                    validationSucceeded = false;
                     errorMessages.ForEach(error => Printer.PrintErr($"❌ {trans.Request.Method} {trans.Request.Path} failed with error: {error}"));
                 }
             }
             catch (JsonException e)
             {
-                Console.WriteLine("jsonString " + jsonString);
-
                 validationSucceeded = false;
                 Printer.PrintErr($"Failed to handle {trans.Request.Method} {trans.Request.Path}: {e.Message}");
             }
