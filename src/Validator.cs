@@ -51,7 +51,7 @@ public class Validator
                     errorMessages.ForEach(error => Printer.PrintErr($"❌ {trans.Request.Method} {trans.Request.Path} failed with error: {error}"));
                 }
             }
-            catch (JsonException e)
+            catch (Exception e)
             {
                 validationSucceeded = false;
                 Printer.PrintErr($"Failed to handle {trans.Request.Method} {trans.Request.Path}: {e.Message}");
