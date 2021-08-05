@@ -5,27 +5,6 @@ using Rumpel.Models;
 
 public static class Interpreter
 {
-    public static (bool, List<string>) InferSchemaAndValidate(string jsonString, Transaction trans, int responseStatusCode, List<string> ignoreFlags)
-    {
-        var isValid = true;
-        var errorMessages = new List<string>();
-        if (trans.Response.StatusCode != responseStatusCode && !ignoreFlags.Contains(IgnoreFlags.IgnoreAssertStatusCode))
-        {
-            isValid = false;
-            errorMessages.Add($@"request {trans.Request.Method} {trans.Request.Path} 
-            received status code {responseStatusCode}
-            but expected status code { trans.Response.StatusCode}
-            ");
-        }
-        var (passesSchemaValidation, schemaErrorMessages) = InferSchemaAndValidate(jsonString, trans.Response.RawBody, ignoreFlags);
-        if (!passesSchemaValidation)
-        {
-            isValid = false;
-            errorMessages.AddRange(schemaErrorMessages);
-        }
-        return (isValid, errorMessages);
-    }
-
     public static (bool, List<string>) InferSchemaAndValidate(string jsonString, string expectedJsonString, List<string> ignoreFlags)
     {
         var isValid = true;

@@ -37,12 +37,10 @@ public class Validator
 
             using var outboundRequest = InitiateOutboundRequest(trans.Request);
             CopyHeadersAndContentFromRequest(trans.Request, outboundRequest);
-
             using var responseMessage = await _httpClient.SendAsync(outboundRequest);
-            var jsonString = await responseMessage.Content.ReadAsStringAsync();
             try
             {
-                var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, trans, (int)responseMessage.StatusCode, _ignoreFlags);
+                var (isValid, errorMessages) = await ValidateResponse(responseMessage, trans, _ignoreFlags);
                 if (isValid)
                     Printer.PrintOK($"✅ {trans.Request.Method} {trans.Request.Path}");
                 else
@@ -58,6 +56,28 @@ public class Validator
             }
         }
         return validationSucceeded;
+    }
+    private async Task<(bool, List<string>)> ValidateResponse(HttpResponseMessage responseMessage, Transaction trans, List<string> ignoreFlags)
+    {
+        var isValid = true;
+        var errorMessages = new List<string>();
+        var jsonString = await responseMessage.Content.ReadAsStringAsync();
+        var responseStatusCode = (int)responseMessage.StatusCode;
+        if (trans.Response.StatusCode != responseStatusCode && !ignoreFlags.Contains(IgnoreFlags.IgnoreAssertStatusCode))
+        {
+            isValid = false;
+            errorMessages.Add($@"request {trans.Request.Method} {trans.Request.Path} 
+            received status code {responseStatusCode}
+            but expected status code { trans.Response.StatusCode}
+            ");
+        }
+        var (passesSchemaValidation, schemaErrorMessages) = Interpreter.InferSchemaAndValidate(jsonString, trans.Response.RawBody, ignoreFlags);
+        if (!passesSchemaValidation)
+        {
+            isValid = false;
+            errorMessages.AddRange(schemaErrorMessages);
+        }
+        return (isValid, errorMessages);
     }
     private HttpRequestMessage InitiateOutboundRequest(Request rumpelReq)
     {
