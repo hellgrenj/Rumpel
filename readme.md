@@ -33,8 +33,9 @@ Rumpel listens on port 8181 or the number set in the environment variable **RUMP
 Validation mode supports bearer tokens and you can skip certain assertions with   **ignore-flags**.     
 Run the --help command for more information.   
 This should be a part of the Providers CI/CD pipeline, see ./tests/integration for an example on how to do this with docker-compose.  
-**screenshot**  
+**screenshots**  
 ![./img/validating.png](./img/validating.png)  
+![./img/failedValidation.png](./img/failedValidation.png)   
 3. **Mock a provider/API**  
 ``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
 ![./img/mocking.jpg](./img/mocking.jpg)  

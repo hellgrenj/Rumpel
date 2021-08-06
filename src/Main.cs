@@ -36,13 +36,15 @@ async Task RecordContract(string[] args)
         Environment.Exit(1);
     }
 
-    var (contractName, contractNameExtracted) = TryExtractSetting(args, prefix: "--contract-name=", argumentName: "contract name", expectedInput: "name");
+    var contractNamePrefix = "--contract-name=";
+    var (contractName, contractNameExtracted) = TryExtractSetting(args, contractNamePrefix);
     if (!contractNameExtracted)
-        ExitWithArgumentMissingOrInvalid(argumentName: "contract name", prefix: "--contract-name=", expectedInput: "name");
+        ExitWithArgumentMissingOrInvalid(argumentName: "contract name", contractNamePrefix, expectedInput: "name");
 
-    var (targetApi, targetApiExtracted) = TryExtractSetting(args, prefix: "--target-api=", argumentName: "target api", expectedInput: "url");
+    var targetApiPrefix = "--target-api=";
+    var (targetApi, targetApiExtracted) = TryExtractSetting(args, targetApiPrefix);
     if (!targetApiExtracted)
-        ExitWithArgumentMissingOrInvalid(argumentName: "target api", prefix: "--target-api=", expectedInput: "url");
+        ExitWithArgumentMissingOrInvalid(argumentName: "target api", targetApiPrefix, expectedInput: "url");
 
     var contract = new Contract() { Name = contractName, URL = targetApi };
     var recorder = new Recorder(contract);
@@ -55,11 +57,13 @@ async Task ValidateContract(string[] args)
         Printer.PrintErr("missing arguments, expecting: --validate-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>)");
         Environment.Exit(1);
     }
-    var (contractPath, contractPathExtracted) = TryExtractSetting(args, prefix: "--contract-path=", argumentName: "contract path", expectedInput: "path");
-    if (!contractPathExtracted)
-        ExitWithArgumentMissingOrInvalid(argumentName: "contract path", prefix: "--contract-path=", expectedInput: "path");
 
-    var (bearerToken, _) = TryExtractSetting(args, prefix: "--bearer-token=", argumentName: "bearer token", expectedInput: "token");
+    var contractPathPrefix = "--contract-path=";
+    var (contractPath, contractPathExtracted) = TryExtractSetting(args, contractPathPrefix);
+    if (!contractPathExtracted)
+        ExitWithArgumentMissingOrInvalid(argumentName: "contract path", contractPathPrefix, expectedInput: "path");
+
+    var (bearerToken, _) = TryExtractSetting(args, prefix: "--bearer-token=");
 
     Contract contract = null;
     try
@@ -93,9 +97,10 @@ async Task MockProvider(string[] args)
         Printer.PrintErr("missing arguments, expecting: --mock-provider|-m --contract=<path>");
         Environment.Exit(1);
     }
-    var (contractPath, contractPathExtracted) = TryExtractSetting(args, prefix: "--contract-path=", argumentName: "contract path", expectedInput: "path");
+    var contractPathPrefix = "--contract-path=";
+    var (contractPath, contractPathExtracted) = TryExtractSetting(args, contractPathPrefix);
     if (!contractPathExtracted)
-        ExitWithArgumentMissingOrInvalid(argumentName: "contract path", prefix: "--contract-path=", expectedInput: "path");
+        ExitWithArgumentMissingOrInvalid(argumentName: "contract path", contractPathPrefix, expectedInput: "path");
 
     Contract contract = null;
     try
@@ -112,7 +117,7 @@ async Task MockProvider(string[] args)
     await mocker.Run();
 
 }
-(string, bool) TryExtractSetting(string[] args, string prefix, string argumentName, string expectedInput)
+(string, bool) TryExtractSetting(string[] args, string prefix)
 {
     string setting;
     bool extracted;
