@@ -98,7 +98,7 @@ const validationResult = await getValidationResult();
 console.log("Rumpel validation is done!");
 
 const validationSucceeded = validationResult.includes(
-  "CONTRACT CONSUMER-API IS VALID!",
+  "CONTRACT TEST PASSED! (CONTRACT: CONSUMER-API)",
 );
 if (validationSucceeded) {
   console.log(Colors.green("validation succeeded"));

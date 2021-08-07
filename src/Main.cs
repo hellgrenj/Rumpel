@@ -17,7 +17,7 @@ switch (args[0])
 {
     case "--help":
     case "-h": Printer.PrintHelp(); break;
-    case "--version": Printer.PrintInfo("Rumpel v0.1.1"); break;
+    case "--version": Printer.PrintInfo("Rumpel v0.1.2"); break;
     case "--record-contract":
     case "-r": await RecordContract(args); break;
     case "--validate-contract":
@@ -81,11 +81,11 @@ async Task ValidateContract(string[] args)
     var validationSucceeded = await validator.Validate();
     if (validationSucceeded)
     {
-        Printer.PrintOK($"\nContract {contract.Name} is valid!".ToUpper());
+        Printer.PrintOK($"\nContract test passed! (contract: {contract.Name})".ToUpper());
     }
     else
     {
-        Printer.PrintErr($"\nContract {contract.Name} is invalid!".ToUpper());
+        Printer.PrintErr($"\nContract test failed! (contract: {contract.Name})".ToUpper());
         Environment.Exit(1);
     }
 
