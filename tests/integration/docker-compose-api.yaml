@@ -1,0 +1,15 @@
+version: '3'
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '1337:1337'
+    networks:
+      - integration-test-nw
+networks:
+  integration-test-nw:
+    name: integration-test-nw
+  
+ 

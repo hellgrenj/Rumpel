@@ -1,12 +1,15 @@
-import {
-  createJWT,
-  getValidationResult,
-  sleep,
-  waitForEndpoint,
-} from "./util.ts";
+import { getValidationResult, sleep, waitForEndpoint } from "./util.ts";
 import * as Colors from "https://deno.land/std@0.95.0/fmt/colors.ts";
 
 console.log("trying to cleanup prev run");
+const stoppingRunningAPI = Deno.run({
+  cmd: ["docker-compose", "--file", "docker-compose-api.yaml", "down"],
+  stdout: "piped",
+  stdin: "piped",
+  stderr: "piped",
+});
+await stoppingRunningAPI.status();
+
 const cleaningUpPrevRecordScenario = Deno.run({
   cmd: ["docker-compose", "--file", "docker-compose-record.yaml", "down"],
   stdout: "piped",
@@ -30,7 +33,31 @@ const cleaningUpPrevMockScenario = Deno.run({
 await cleaningUpPrevMockScenario.status();
 console.log("cleanup done, moving on..");
 
+console.log(Colors.blue("starting test API"));
+
+Deno.run({
+  cmd: [
+    "docker-compose",
+    "--file",
+    "docker-compose-api.yaml",
+    "up",
+    "--build",
+  ],
+  stdout: "piped",
+  stdin: "piped",
+  stderr: "piped",
+});
+
+console.log("waiting for test-api to be available..");
+const apiHealthEndpoint = "http://localhost:1337/health";
+await waitForEndpoint(apiHealthEndpoint);
+
+const jwt = await fetch("http://localhost:1337/token", { method: "GET" }).then(
+  async (response) => await response.text()
+);
+
 console.log(Colors.blue("starting recording scenario"));
+
 const recordScenario = Deno.run({
   cmd: [
     "docker-compose",
@@ -38,7 +65,6 @@ const recordScenario = Deno.run({
     "docker-compose-record.yaml",
     "up",
     "--build",
-    "--force-recreate",
   ],
   stdout: "piped",
   stdin: "piped",
@@ -49,7 +75,7 @@ console.log("waiting for test-api to be available..");
 const apiHealthEndpointThruRumpel = "http://localhost:8585/health";
 await waitForEndpoint(apiHealthEndpointThruRumpel);
 
-const jwt = await createJWT();
+
 const consumerSim = Deno.run({
   env: {
     "BEARER_TOKEN": jwt,
@@ -84,7 +110,6 @@ Deno.run({
     "docker-compose-validate.yaml",
     "up",
     "--build",
-    "--force-recreate",
   ],
   stdout: "piped",
   stdin: "piped",
@@ -120,7 +145,6 @@ const mockProviderScenario = Deno.run({
     "docker-compose-mock.yaml",
     "up",
     "--build",
-    "--force-recreate",
   ],
   stdout: "piped",
   stdin: "piped",
@@ -152,6 +176,15 @@ const stoppingMockScenario = Deno.run({
   stderr: "piped",
 });
 await stoppingMockScenario.status();
+
+
+const stopApiProcess = Deno.run({
+  cmd: ["docker-compose", "--file", "docker-compose-api.yaml", "down"],
+  stdout: "piped",
+  stdin: "piped",
+  stderr: "piped",
+});
+await stopApiProcess.status();
 
 if (validationSucceeded && mockingSucceeded) {
   console.log(

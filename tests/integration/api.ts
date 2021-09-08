@@ -1,8 +1,29 @@
 import { Application } from "https://deno.land/x/oak@v7.7.0/mod.ts";
 import { Router } from "https://deno.land/x/oak@v7.7.0/mod.ts";
-import { verify } from "https://deno.land/x/djwt@v2.2/mod.ts";
+import {
+  create,
+  getNumericDate,
+  verify,
+} from "https://deno.land/x/djwt@v2.3/mod.ts";
 const API_VERSION = Deno.args[0] ? Deno.args[0] : "V1";
 console.log(`running API version ${API_VERSION}`);
+
+const key = await crypto.subtle.generateKey(
+  { name: "HMAC", hash: "SHA-512" },
+  true,
+  ["sign", "verify"],
+);
+
+const getToken = async (
+  { request, response }: { request: any; response: any },
+) => {
+  const token = await create(
+    { alg: "HS512", typ: "JWT" },
+    { exp: getNumericDate(60 * 60), foo: "bar" }, // valid for 1 hour...
+    key,
+  );
+  response.body = token;
+};
 
 // API and in-memory data store of cakes..
 interface ICake {
@@ -20,14 +41,13 @@ let cakes = new Array<ICake>();
 const secureCakes = async (
   { request, response }: { request: any; response: any },
 ) => {
-  
-  const bearerToken = request.headers.get("Authorization"); 
+  const bearerToken = request.headers.get("Authorization");
   const jwt = bearerToken.slice(7); // strip away the "Bearer " part
   if (!jwt) {
     response.status = 401;
   } else {
     try {
-      const payload = await verify(jwt, "SECRET_SYMMETRIC_KEY", "HS512");
+      const payload = await verify(jwt, key);
       console.log(`received jwt ${JSON.stringify(payload)}`);
       const secureCake = {
         id: 1,
@@ -37,7 +57,7 @@ const secureCakes = async (
       response.status = 200;
       response.body = [secureCake];
     } catch (e) {
-      console.log('failed with')
+      console.log("failed with");
       console.log(e);
       response.status = 401;
     }
@@ -70,7 +90,7 @@ const deleteCake = (
   { params, response }: { params: any; response: any },
 ) => {
   const id: number = params.id;
-  
+
   cakes = cakes.filter((c) => c.id != id);
   response.status = 200;
 };
@@ -81,7 +101,7 @@ const replaceCake = async (
   const body = await request.body();
   const cake: ICake = await body.value;
   cake.id = id;
-  
+
   cakes = cakes.filter((c) => c.id != cake.id);
   cakes.push(cake);
   response.status = 200;
@@ -107,6 +127,7 @@ const router = new Router();
 router.get("/health", ({ response }: { response: any }) => {
   response.status = 200;
 });
+router.get("/token",getToken);
 router.get("/scakes", secureCakes);
 router.get("/cakes", getCakes);
 router.get("/cakes/:id", getCake);

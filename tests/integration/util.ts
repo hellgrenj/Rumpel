@@ -1,5 +1,3 @@
-import { create } from "https://deno.land/x/djwt@v2.2/mod.ts";
-import { getNumericDate } from "https://deno.land/x/djwt@v2.2/mod.ts";
 
 export const sleep = (ms: number) => {
   return new Promise((resolve) => {
@@ -22,13 +20,6 @@ export const waitForEndpoint = async (url: string): Promise<void> => {
     await sleep(3000);
     return waitForEndpoint(url);
   }
-};
-export const createJWT = async (): Promise<string> => {
-  return await create(
-    { alg: "HS512", typ: "JWT" },
-    { exp: getNumericDate(60 * 60), foo: "bar" }, // valid for 1 hour...
-    "SECRET_SYMMETRIC_KEY",
-  );
 };
 export const getValidationResult = async (): Promise<string> => {
   const watchRumpel = Deno.run({
