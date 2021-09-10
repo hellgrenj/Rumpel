@@ -114,8 +114,7 @@ namespace unit
                 {
                     Action = Actions.IgnoreObjectProperty,
                     PropertyName = "age",
-                    Depth = 0,
-                    ParentType = null
+                    Depth = 0
                 }
             });
             Assert.True(isValid);
@@ -141,8 +140,7 @@ namespace unit
                 {
                     Action = Actions.CompareObjectPropertyValues,
                     PropertyName = "nickname",
-                    Depth = 0,
-                    ParentType = null
+                    Depth = 0
                 }
             });
 
@@ -277,8 +275,7 @@ namespace unit
                 new() {
                     PropertyName = "prop13",
                     Action = Actions.CompareObjectPropertyValues,
-                    Depth = 1,
-                    ParentType = "object"
+                    Depth = 1
                 }
             });
 

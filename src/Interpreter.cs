@@ -122,7 +122,7 @@ public static class Interpreter
         {
             if (jsonObj.ContainsKey(key) == false)
             {
-                if (!CustomizedTo(Actions.IgnoreObjectProperty, customizations, key, nestedDepth, nestedInParentType))
+                if (!CustomizedTo(Actions.IgnoreObjectProperty, customizations, key, nestedDepth))
                 {
                     isValid = false;
                     var errorMessage = $"Object missing property {key} of type {expectedJsonObj[key].ValueKind.ToString()}";
@@ -159,7 +159,7 @@ public static class Interpreter
                 errorMessages.Add(errorMessage);
             }
             else if (jsonObj[key].ValueKind.ToString() == expectedJsonObj[key].ValueKind.ToString()
-            && CustomizedTo(Actions.CompareObjectPropertyValues, customizations, key, nestedDepth, nestedInParentType))
+            && CustomizedTo(Actions.CompareObjectPropertyValues, customizations, key, nestedDepth))
             {
                 var (singleValueOk, singleValueErrors) = AssertPropertyValue(key, expectedJsonObj, jsonObj, nestedDepth, nestedInParentType);
                 if (!singleValueOk)
@@ -209,9 +209,9 @@ public static class Interpreter
         }
         return errorMessage;
     }
-    private static bool CustomizedTo(string action, List<Customization> customizations, string propName, int nestedDepth, string nestedInParentType)
+    private static bool CustomizedTo(string action, List<Customization> customizations, string propName, int nestedDepth)
     {
-        return customizations.Exists(c => c.PropertyName == propName && c.Action == action && c.Depth == nestedDepth && c.ParentType == nestedInParentType);
+        return customizations.Exists(c => c.PropertyName == propName && c.Action == action && c.Depth == nestedDepth);
     }
 
 

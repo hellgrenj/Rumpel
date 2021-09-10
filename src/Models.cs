@@ -72,7 +72,6 @@ namespace Rumpel.Models
     public class Customization
     {
         public string PropertyName { get; set; }
-        public string ParentType { get; set; }
         public int Depth { get; set; }
         public string Action { get; set; } 
     }
