@@ -5,7 +5,7 @@ using Rumpel.Models;
 
 public static class Interpreter
 {
-    public static (bool, List<string>) InferSchemaAndValidate(string jsonString, string expectedJsonString, List<string> ignoreFlags)
+    public static (bool, List<string>) InferSchemaAndValidate(string jsonString, string expectedJsonString, List<string> ignoreFlags, List<Customization> customizations)
     {
         var isValid = true;
         var errorMessages = new List<string>();
@@ -15,15 +15,12 @@ public static class Interpreter
         {
             return (isValid, errorMessages);
         }
-
         var json = JsonSerializer.Deserialize<JsonElement>(jsonString);
         var expectedJson = JsonSerializer.Deserialize<JsonElement>(expectedJsonString);
-
-
         switch (expectedJson.ValueKind)
         {
             case JsonValueKind.Object:
-                var (objectOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson.GetRawText(), json.GetRawText(), ignoreFlags);
+                var (objectOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson.GetRawText(), json.GetRawText(), ignoreFlags, customizations);
                 if (!objectOk)
                 {
                     isValid = false;
@@ -31,7 +28,7 @@ public static class Interpreter
                 }
                 break;
             case JsonValueKind.Array:
-                var (arrayOk, arrayErrors) = AssertArray(expectedJson, json, ignoreFlags);
+                var (arrayOk, arrayErrors) = AssertArray(expectedJson, json, ignoreFlags, customizations);
                 if (!arrayOk)
                 {
                     isValid = false;
@@ -52,7 +49,7 @@ public static class Interpreter
 
     }
 
-    private static (bool, List<string>) AssertArray(JsonElement expectedJson, JsonElement json, List<string> ignoreFlags, int nestedDepth = 0, string nestedInParentType = null)
+    private static (bool, List<string>) AssertArray(JsonElement expectedJson, JsonElement json, List<string> ignoreFlags, List<Customization> customizations, int nestedDepth = 0, string nestedInParentType = null)
     {
         var isValid = true;
         var errorMessages = new List<string>();
@@ -71,7 +68,7 @@ public static class Interpreter
             if (expectedJson[i].ValueKind.ToString() == JsonValueKind.Array.ToString())
             {
                 var nextLevel = nestedDepth + 1;
-                var (nestedArrayOk, nestedArrayErrors) = AssertArray(expectedJson[i], json[i], ignoreFlags, nextLevel, "array");
+                var (nestedArrayOk, nestedArrayErrors) = AssertArray(expectedJson[i], json[i], ignoreFlags, customizations, nextLevel, "array");
                 if (!nestedArrayOk)
                 {
                     isValid = false;
@@ -81,7 +78,7 @@ public static class Interpreter
             else if (expectedJson[i].ValueKind.ToString() == JsonValueKind.Object.ToString())
             {
                 var nextLevel = nestedDepth + 1;
-                var (objectPropertiesOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson[i].GetRawText(), json[i].GetRawText(), ignoreFlags, nextLevel, "array");
+                var (objectPropertiesOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson[i].GetRawText(), json[i].GetRawText(), ignoreFlags, customizations, nextLevel, "array");
                 if (!objectPropertiesOk)
                 {
                     isValid = false;
@@ -114,7 +111,7 @@ public static class Interpreter
         return (isValid, errorMessages);
     }
 
-    private static (bool, List<string>) AssertObjectProperties(string expectedJsonString, string jsonString, List<string> ignoreFlags, int nestedDepth = 0,
+    private static (bool, List<string>) AssertObjectProperties(string expectedJsonString, string jsonString, List<string> ignoreFlags, List<Customization> customizations, int nestedDepth = 0,
     string nestedInParentType = null)
     {
         var isValid = true;
@@ -125,16 +122,18 @@ public static class Interpreter
         {
             if (jsonObj.ContainsKey(key) == false)
             {
-                isValid = false;
-                var errorMessage = $"Object missing property {key} of type {expectedJsonObj[key].ValueKind.ToString()}";
-                errorMessage = AddNestedInfoIfNested(nestedDepth, nestedInParentType, errorMessage);
-                errorMessages.Add(errorMessage);
-
+                if (!CustomizedTo(Actions.IgnoreObjectProperty, customizations, key, nestedDepth, nestedInParentType))
+                {
+                    isValid = false;
+                    var errorMessage = $"Object missing property {key} of type {expectedJsonObj[key].ValueKind.ToString()}";
+                    errorMessage = AddNestedInfoIfNested(nestedDepth, nestedInParentType, errorMessage);
+                    errorMessages.Add(errorMessage);
+                }
             }
             else if (jsonObj[key].ValueKind == JsonValueKind.Object)
             {
                 var nextLevel = nestedDepth + 1;
-                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), jsonObj[key].GetRawText(), ignoreFlags, nextLevel, "object");
+                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), jsonObj[key].GetRawText(), ignoreFlags, customizations, nextLevel, "object");
                 if (!nestedObjectPropertiesOk)
                 {
                     isValid = false;
@@ -145,7 +144,7 @@ public static class Interpreter
             else if (jsonObj[key].ValueKind == JsonValueKind.Array)
             {
                 var nextLevel = nestedDepth + 1;
-                var (arrayOk, arrayErrors) = AssertArray(expectedJsonObj[key], jsonObj[key], ignoreFlags, nextLevel, "object");
+                var (arrayOk, arrayErrors) = AssertArray(expectedJsonObj[key], jsonObj[key], ignoreFlags, customizations, nextLevel, "object");
                 if (!arrayOk)
                 {
                     isValid = false;
@@ -159,11 +158,21 @@ public static class Interpreter
                 errorMessage = AddNestedInfoIfNested(nestedDepth, nestedInParentType, errorMessage);
                 errorMessages.Add(errorMessage);
             }
+            else if (jsonObj[key].ValueKind.ToString() == expectedJsonObj[key].ValueKind.ToString()
+            && CustomizedTo(Actions.CompareObjectPropertyValues, customizations, key, nestedDepth, nestedInParentType))
+            {
+                var (singleValueOk, singleValueErrors) = AssertPropertyValue(key, expectedJsonObj, jsonObj, nestedDepth, nestedInParentType);
+                if (!singleValueOk)
+                {
+                    isValid = false;
+                    errorMessages.AddRange(singleValueErrors);
+                }
+            }
+
         }
 
         return (isValid, errorMessages);
     }
-
     private static (bool, List<string>) AssertSingleValue(JsonElement expectedJson, JsonElement json, int nestedDepth = 0,
     string nestedInParentType = null)
     {
@@ -178,6 +187,20 @@ public static class Interpreter
         }
         return (isValid, errorMessages);
     }
+    private static (bool, List<string>) AssertPropertyValue(string key, Dictionary<string, JsonElement> expectedJsonObj,
+    Dictionary<string, JsonElement> jsonObj, int nestedDepth = 0, string nestedInParentType = null)
+    {
+        var isValid = true;
+        var errorMessages = new List<string>();
+        if (jsonObj[key].GetRawText() != expectedJsonObj[key].GetRawText())
+        {
+            isValid = false;
+            var errorMessage = $"property with name {key} has the value {jsonObj[key].GetRawText()} and the expected value is {expectedJsonObj[key].GetRawText()}";
+            errorMessage = AddNestedInfoIfNested(nestedDepth, nestedInParentType, errorMessage);
+            errorMessages.Add(errorMessage);
+        }
+        return (isValid, errorMessages);
+    }
     private static string AddNestedInfoIfNested(int nestedDepth, string nestedInParentType, string errorMessage)
     {
         if (nestedDepth > 0 && nestedInParentType != null)
@@ -186,4 +209,10 @@ public static class Interpreter
         }
         return errorMessage;
     }
+    private static bool CustomizedTo(string action, List<Customization> customizations, string propName, int nestedDepth, string nestedInParentType)
+    {
+        return customizations.Exists(c => c.PropertyName == propName && c.Action == action && c.Depth == nestedDepth && c.ParentType == nestedInParentType);
+    }
+
+
 }

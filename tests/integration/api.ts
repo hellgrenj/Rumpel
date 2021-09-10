@@ -5,8 +5,6 @@ import {
   getNumericDate,
   verify,
 } from "https://deno.land/x/djwt@v2.3/mod.ts";
-const API_VERSION = Deno.args[0] ? Deno.args[0] : "V1";
-console.log(`running API version ${API_VERSION}`);
 
 const key = await crypto.subtle.generateKey(
   { name: "HMAC", hash: "SHA-512" },
@@ -28,7 +26,7 @@ const getToken = async (
 // API and in-memory data store of cakes..
 interface ICake {
   id: number;
-  name: string;
+  name?: string;
   ingredients: Array<string>;
 }
 
@@ -73,6 +71,18 @@ const getCake = (
 ) => {
   const id: number = params.id;
   const cake = cakes.filter((c) => c.id == id)[0];
+  console.log('V1 returning cake', cake);
+  response.status = 200;
+  response.body = cake;
+};
+const getCakeV2 = (
+  { params, response }: { params: any; response: any },
+) => {
+  const id: number = params.id;
+  const cake = cakes.filter((c) => c.id == id)[0];
+  const modifiedCake = {...cake};
+  delete modifiedCake.name;
+  console.log('V2 returning cake', modifiedCake);
   response.status = 200;
   response.body = cake;
 };
@@ -131,6 +141,7 @@ router.get("/token",getToken);
 router.get("/scakes", secureCakes);
 router.get("/cakes", getCakes);
 router.get("/cakes/:id", getCake);
+router.get("/V2/cakes/:id", getCakeV2);
 router.post("/cakes", addCake);
 router.delete("/cakes/:id", deleteCake);
 router.put("/cakes/:id", replaceCake);

@@ -37,6 +37,7 @@ namespace Rumpel.Models
     {
         public Request Request { get; set; }
         public Response Response { get; set; }
+        public List<Customization> Customizations { get; set; } = new();
     }
     public class Request
     {
@@ -67,6 +68,18 @@ namespace Rumpel.Models
                 this.Headers.Add(respHeader.Key, respHeader.Value);
             }
         }
+    }
+    public class Customization
+    {
+        public string PropertyName { get; set; }
+        public string ParentType { get; set; }
+        public int Depth { get; set; }
+        public string Action { get; set; } 
+    }
+    public class Actions  
+    {
+        public static string IgnoreObjectProperty = "IgnoreObjectProperty";
+        public static string CompareObjectPropertyValues = "CompareObjectPropertyValues";
     }
 
 }
