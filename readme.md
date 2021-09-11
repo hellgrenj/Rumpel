@@ -36,9 +36,7 @@ This should be a part of the Providers CI/CD pipeline, see ./tests/integration f
 **screenshots**  
 ![./img/validating.png](./img/validating.png)  
 ![./img/failedValidation.png](./img/failedValidation.png)   
-
-
-**Customizations**
+**Customizations**  
 
 You can customize the validation per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*
 ```
