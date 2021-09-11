@@ -243,7 +243,8 @@ namespace unit
                 {
                     prop11 = 1,
                     prop12 = 2,
-                    prop13 = "hej"
+                    prop13 = "hej",
+                    prop14 = 5,
                 },
                 propx = new { propx1 = "hellu" },
                 propy = new { propy1 = "hellu" },
@@ -259,7 +260,8 @@ namespace unit
                 {
                     prop11 = 1,
                     prop12 = 2,
-                    prop13 = "hejsan" // not same as "hej" in expected (see customization below..)
+                    prop13 = "hejsan", // not same as "hej" in expected (see customization below..)
+                    prop14 = 6, // not the same as 5 in expected (see customization below..)
                 },
                 propx = new { propx1 = "hellu" }, // we are missing property propy here...
                 prop2 = new ArrayList(){new {
@@ -276,14 +278,21 @@ namespace unit
                     PropertyName = "prop13",
                     Action = Actions.CompareObjectPropertyValues,
                     Depth = 1
+                },
+                new() {
+                    PropertyName = "prop14",
+                    Action = Actions.CompareObjectPropertyValues,
+                    Depth = 1
                 }
             });
 
             Assert.False(isValid);
-            Assert.Equal(errorMessages.Count, 3);
+            Assert.Equal(errorMessages.Count, 4);
+            
             Assert.Contains("property with name prop13 has the value \"hejsan\" and the expected value is \"hej\" in a nested object (depth 1)", errorMessages[0]);
-            Assert.Contains("Object missing property propy of type Object", errorMessages[1]);
-            Assert.Contains("expected single value of type String but it was Number in a nested array (depth 3)", errorMessages[2]);
+            Assert.Contains("property with name prop14 has the value 6 and the expected value is 5 in a nested object (depth 1)", errorMessages[1]);
+            Assert.Contains("Object missing property propy of type Object", errorMessages[2]);
+            Assert.Contains("expected single value of type String but it was Number in a nested array (depth 3)", errorMessages[3]);
         }
 
     }
