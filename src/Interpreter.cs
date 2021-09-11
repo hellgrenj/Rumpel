@@ -161,11 +161,11 @@ public static class Interpreter
             else if (jsonObj[key].ValueKind.ToString() == expectedJsonObj[key].ValueKind.ToString()
             && CustomizedTo(Actions.CompareObjectPropertyValues, customizations, key, nestedDepth))
             {
-                var (singleValueOk, singleValueErrors) = AssertPropertyValue(key, expectedJsonObj, jsonObj, nestedDepth, nestedInParentType);
-                if (!singleValueOk)
+                var (propertyValueOk, propertyValueErrors) = AssertPropertyValue(key, expectedJsonObj, jsonObj, nestedDepth, nestedInParentType);
+                if (!propertyValueOk)
                 {
                     isValid = false;
-                    errorMessages.AddRange(singleValueErrors);
+                    errorMessages.AddRange(propertyValueErrors);
                 }
             }
 

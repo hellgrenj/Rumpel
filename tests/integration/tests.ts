@@ -116,7 +116,6 @@ contract.Transactions.filter((t: any) =>
   t.Customizations.push({
     PropertyName: "name",
     Action: "IgnoreObjectProperty",
-    ParentType: null,
     Depth: 0,
   });
 });
