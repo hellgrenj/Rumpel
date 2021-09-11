@@ -36,6 +36,14 @@ This should be a part of the Providers CI/CD pipeline, see ./tests/integration f
 **screenshots**  
 ![./img/validating.png](./img/validating.png)  
 ![./img/failedValidation.png](./img/failedValidation.png)   
+**Customizations**  
+You can customize the validation per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*. A Customization has 3 properties: The name of the target *Object Property*, The name of the *Action* and at what Depth in the JSON the property is found. (is it a first level property or a property in a nested object..)
+![./img/customizations.png](./img/customizations.png) 
+**Available Customizations**  
+- CompareObjectPropertyValues *(have Rumpel assert that the value is the same as the recorded value)*  
+- IgnoreObjectProperty *(ignores one specific property in the object, i.e allow it to be missing or changed)*  
+
+
 3. **Mock a provider/API**  
 ``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
 ![./img/mocking.jpg](./img/mocking.jpg)  

@@ -71,13 +71,14 @@ public class Validator
             but expected status code { trans.Response.StatusCode}
             ");
         }
-        var (passesSchemaValidation, schemaErrorMessages) = Interpreter.InferSchemaAndValidate(jsonString, trans.Response.RawBody, ignoreFlags);
+        var (passesSchemaValidation, schemaErrorMessages) = Interpreter.InferSchemaAndValidate(jsonString, trans.Response.RawBody, ignoreFlags, trans.Customizations);
         if (!passesSchemaValidation)
         {
             isValid = false;
             errorMessages.AddRange(schemaErrorMessages);
         }
         return (isValid, errorMessages);
+
     }
     private HttpRequestMessage InitiateOutboundRequest(Request rumpelReq)
     {

@@ -53,7 +53,7 @@ const apiHealthEndpoint = "http://localhost:1337/health";
 await waitForEndpoint(apiHealthEndpoint);
 
 const jwt = await fetch("http://localhost:1337/token", { method: "GET" }).then(
-  async (response) => await response.text()
+  async (response) => await response.text(),
 );
 
 console.log(Colors.blue("starting recording scenario"));
@@ -74,7 +74,6 @@ const recordScenario = Deno.run({
 console.log("waiting for test-api to be available..");
 const apiHealthEndpointThruRumpel = "http://localhost:8585/health";
 await waitForEndpoint(apiHealthEndpointThruRumpel);
-
 
 const consumerSim = Deno.run({
   env: {
@@ -98,6 +97,34 @@ const stoppingRecordScenario = Deno.run({
   stderr: "piped",
 });
 await stoppingRecordScenario.status();
+
+console.log(
+  Colors.yellow(
+    "applying customizations to request GET /cakes/1 and simulate a change in the API",
+  ),
+);
+const contract = JSON.parse(
+  Deno.readTextFileSync("./contracts/consumer-api.rumpel.contract.json"),
+);
+contract.Transactions.filter((t: any) =>
+  t.Request.Path == "/cakes/1" && t.Request.Method == "GET"
+).forEach((t: any) => {
+  // copy so original is left for the mocker test below...
+  contract.Transactions.splice(contract.Transactions.indexOf(t), 0, JSON.parse(JSON.stringify(t)));
+  // create a V2 with customizations.. (response still expects property name, but IgnoreObjectProperty customization makes the validation pass anyway..)
+  t.Request.Path = "/V2/cakes/1";
+  t.Customizations.push({
+    PropertyName: "name",
+    Action: "IgnoreObjectProperty",
+    Depth: 0,
+  });
+});
+Deno.writeTextFileSync(
+  "./contracts/consumer-api.rumpel.contract.json",
+  JSON.stringify(contract, null, 2),
+);
+
+
 
 console.log(Colors.blue("starting validation scenario.."));
 Deno.run({
@@ -176,7 +203,6 @@ const stoppingMockScenario = Deno.run({
   stderr: "piped",
 });
 await stoppingMockScenario.status();
-
 
 const stopApiProcess = Deno.run({
   cmd: ["docker-compose", "--file", "docker-compose-api.yaml", "down"],

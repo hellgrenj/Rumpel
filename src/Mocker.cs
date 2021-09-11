@@ -74,7 +74,7 @@ public class Mocker
         context.Request.Body.Position = 0;
         var streamContent = new StreamContent(context.Request.Body);
         var requestBodyAsString = await streamContent.ReadAsStringAsync();
-        var (requestOk, requestErrors) = Interpreter.InferSchemaAndValidate(requestBodyAsString, trans.Request.RawBody, new List<string>() { IgnoreFlags.IgnoreAssertArrayLength });
+        var (requestOk, requestErrors) = Interpreter.InferSchemaAndValidate(requestBodyAsString, trans.Request.RawBody, new List<string>() { IgnoreFlags.IgnoreAssertArrayLength }, new());
         if (!requestOk)
         {
             isValid = false;
