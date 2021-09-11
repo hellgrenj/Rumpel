@@ -67,7 +67,7 @@ You need the following installed on your dev machinge:
 * dotnet 5.x
 * docker 20.10.x
 * docker-compose 1.29.x
-* deno 1.12.3
+* deno 1.13.2
 
 ### tests
 There are both unit tests and integration tests. Check the ./tests folder.    
