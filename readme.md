@@ -37,36 +37,12 @@ This should be a part of the Providers CI/CD pipeline, see ./tests/integration f
 ![./img/validating.png](./img/validating.png)  
 ![./img/failedValidation.png](./img/failedValidation.png)   
 **Customizations**  
+You can customize the validation per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*. A Customization has 3 properties: The name of the target *Object Property*, The name of the *Action* and at what Depth in the JSON the property is found. (is it a first level property or a property in a nested object..)
+![./img/customizations.png](./img/customizations.png) 
+**Available Customizations**  
+- CompareObjectPropertyValues *(have Rumpel assert that the value is the same as the recorded value)*  
+- IgnoreObjectProperty *(ignores one specific property in the object, i.e allow it to be missing or changed)*  
 
-You can customize the validation per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*
-```
- {
-      "Request": {
-        "Path": "/V2/cakes/1",
-        "Method": "GET",
-        "RawBody": "",
-        "Headers": {}
-      },
-      "Response": {
-        "StatusCode": 200,
-        "Headers": {},
-        "RawBody": "{\"name\":\"raspberry sensation2021\",\"ingredients\":[\"sugar\",\"love\",\"pineapple\"],\"id\":\"1\"}"
-      },
-      "Customizations": [
-        {
-          "PropertyName": "name",
-          "Action": "IgnoreObjectProperty",
-          "Depth": 0
-        }
-      ]
-    },
-```
-
-**Available Customizations**
-- CompareObjectPropertyValues *(have Rumpel assert that the value is the same as the recorded value)*
-- IgnoreObjectProperty *(ignores one specific property in the object, i.e allow it to be missing or changed)*
-
-A Customization always consist of 3 properties: The name of the target Object Property, The name of the Action and at what Depth in the JSON it is. (is it a first level property or a property in a nested object..)
 
 3. **Mock a provider/API**  
 ``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
