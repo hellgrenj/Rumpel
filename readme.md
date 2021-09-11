@@ -36,26 +36,11 @@ This should be a part of the Providers CI/CD pipeline, see ./tests/integration f
 **screenshots**  
 ![./img/validating.png](./img/validating.png)  
 ![./img/failedValidation.png](./img/failedValidation.png)   
-3. **Mock a provider/API**  
-``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
-![./img/mocking.jpg](./img/mocking.jpg)  
-This can be used in local dev environments to mock dependencies, see ./tests/integration for an example on how to do this with docker-compose.  
-Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**.    
-In this mode Rumpel validates the requests sent by the consumer.  
-**screenshot**  
-![./img/mocking.png](./img/mocking.png) 
 
-### Rumpel has 5 commands:
 
-``--record-contract`` or the shorthand ``-r``  
-``--validate-contract`` or the shorthand ``-v``  
-``--mock-provider`` or the shorthand ``-m``  
-``--help`` or the shorthand ``-h``  
-``--version``   
+**Customizations**
 
-### Customizations
-
-You can customize some default assertions per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*
+You can customize the validation per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*
 ```
  {
       "Request": {
@@ -84,6 +69,23 @@ You can customize some default assertions per transaction by manually adding Cus
 - IgnoreObjectProperty *(ignores one specific property in the object, i.e allow it to be missing or changed)*
 
 A Customization always consist of 3 properties: The name of the target Object Property, The name of the Action and at what Depth in the JSON it is. (is it a first level property or a property in a nested object..)
+
+3. **Mock a provider/API**  
+``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
+![./img/mocking.jpg](./img/mocking.jpg)  
+This can be used in local dev environments to mock dependencies, see ./tests/integration for an example on how to do this with docker-compose.  
+Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**.    
+In this mode Rumpel validates the requests sent by the consumer.  
+**screenshot**  
+![./img/mocking.png](./img/mocking.png) 
+
+### Rumpel has 5 commands:
+
+``--record-contract`` or the shorthand ``-r``  
+``--validate-contract`` or the shorthand ``-v``  
+``--mock-provider`` or the shorthand ``-m``  
+``--help`` or the shorthand ``-h``  
+``--version``   
 
 ## Develop 
 
