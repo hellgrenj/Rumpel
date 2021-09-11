@@ -53,6 +53,38 @@ In this mode Rumpel validates the requests sent by the consumer.
 ``--help`` or the shorthand ``-h``  
 ``--version``   
 
+### Customizations
+
+You can customize some default assertions per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*
+```
+ {
+      "Request": {
+        "Path": "/V2/cakes/1",
+        "Method": "GET",
+        "RawBody": "",
+        "Headers": {}
+      },
+      "Response": {
+        "StatusCode": 200,
+        "Headers": {},
+        "RawBody": "{\"name\":\"raspberry sensation2021\",\"ingredients\":[\"sugar\",\"love\",\"pineapple\"],\"id\":\"1\"}"
+      },
+      "Customizations": [
+        {
+          "PropertyName": "name",
+          "Action": "IgnoreObjectProperty",
+          "Depth": 0
+        }
+      ]
+    },
+```
+
+**Available Customizations**
+- CompareObjectPropertyValues *(have Rumpel assert that the value is the same as the recorded value)*
+- IgnoreObjectProperty *(ignores one specific property in the object, i.e allow it to be missing or changed)*
+
+A Customization always consist of 3 properties: The name of the target Object Property, The name of the Action and at what Depth in the JSON it is. (is it a first level property or a property in a nested object..)
+
 ## Develop 
 
 You need the following installed on your dev machinge:  
