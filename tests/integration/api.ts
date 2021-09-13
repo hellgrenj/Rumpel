@@ -75,6 +75,24 @@ const getCake = (
   response.status = 200;
   response.body = cake;
 };
+const getCakeQuery = (
+ctx: any,
+) => {
+  
+  const id: number = ctx.request.url.searchParams.get('id');
+  console.log('searching for cake with id ', id);
+  const cake = cakes.filter((c) => c.id == id)[0];
+  console.log('getCakeQuery returning cake', cake);
+  if(!cake)
+  {
+    ctx.response.status = 404;
+    ctx.response.body = {};
+  } else {
+    ctx.response.status = 200;
+    ctx.response.body = cake;
+  }
+  
+};
 const getCakeV2 = (
   { params, response }: { params: any; response: any },
 ) => {
@@ -141,6 +159,7 @@ router.get("/token",getToken);
 router.get("/scakes", secureCakes);
 router.get("/cakes", getCakes);
 router.get("/cakes/:id", getCake);
+router.get("/cakeByQuery", getCakeQuery);
 router.get("/V2/cakes/:id", getCakeV2);
 router.post("/cakes", addCake);
 router.delete("/cakes/:id", deleteCake);

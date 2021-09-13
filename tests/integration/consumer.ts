@@ -95,6 +95,18 @@ if (getSingleCakeByIdResponse.status !== 200) {
   console.log("getSingleCakeByIdResponse req succeeded");
 }
 
+const getSingleCakeByQueryParamResponse = await fetch(`${baseUrl}/cakeByQuery?id=1`, {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+if (getSingleCakeByQueryParamResponse.status !== 200) {
+  throw new Error("getSingleCakeByQueryParamResponse request failed");
+} else {
+  console.log("getSingleCakeByQueryParamResponse req succeeded");
+}
+
 const deleteCakeResponse = await fetch(`${baseUrl}/cakes/1`, {
   method: "DELETE",
   headers: {

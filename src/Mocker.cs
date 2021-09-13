@@ -24,6 +24,9 @@ public class Mocker
     {
         var method = context.Request.Method.ToString();
         var path = context.Request.Path.ToString();
+        if (context.Request.QueryString.HasValue)
+            path += context.Request.QueryString.Value;
+
         var trans = _contract.Transactions.Find(t => t.Request.Method == method && t.Request.Path == path);
         if (trans == null)
         {

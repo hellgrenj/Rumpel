@@ -38,11 +38,16 @@ public class Recorder
 
     private async Task<Transaction> InitiateNewTransaction(HttpContext context)
     {
+
+        var path = context.Request.Path.ToString();
+        if (context.Request.QueryString.HasValue)
+            path += context.Request.QueryString.Value;
+
         return new()
         {
             Request = new()
             {
-                Path = context.Request.Path.ToString(),
+                Path = path,
                 Method = context.Request.Method.ToString(),
                 RawBody = await new StreamContent(context.Request.Body).ReadAsStringAsync()
             }
