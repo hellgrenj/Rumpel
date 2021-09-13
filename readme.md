@@ -5,7 +5,7 @@
 ![./img/rumpel.jpeg](./img/rumpel.jpeg)
 
 ## Install   
-**Binaries**: See releases.  
+**Binaries for linux, mac and win**: See releases.  
 **Docker**:   https://hub.docker.com/r/hellgrenj/rumpel.  
 ... Or build from source to target any platform dotnet supports.  
 
