@@ -17,7 +17,7 @@ public class Validator
     private List<string> _ignoreFlags;
 
 
-    public Validator(Contract contract, List<string> ignoreFlags, string bearerToken)
+    public Validator(Contract contract, List<string> ignoreFlags, string bearerToken, string url)
     {
         _contract = contract;
         _ignoreFlags = ignoreFlags;
@@ -26,6 +26,11 @@ public class Validator
         {
             Printer.PrintInfo($"adding bearer token to all requests (token: {bearerToken}");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+        }
+        if (!String.IsNullOrEmpty(url))
+        {
+            Printer.PrintInfo($"overriding recorded url {contract.URL} with {url}");
+            contract.URL = url;
         }
     }
     public async Task<bool> Validate()

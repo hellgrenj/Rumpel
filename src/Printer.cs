@@ -44,8 +44,8 @@ HELP:
 The expected arguments are: --record-contract|-r --contract-name=<name> --target-api=<url>
 
 --validate-contract (or the shorthand -v): This validates (tests) a contract.
-The expected arguments are: --validate-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>)
-(bearer token and ignore flags are optional)  
+The expected arguments are: --validate-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>) (--base-url=<url>)
+(ignore flags, bearer token and base url are optional)  
 
 --mock-provider (or the shorthand -m): This mocks a provider based on a contract.
 The expected arguments are: --mock-provider|m --contract=<path>

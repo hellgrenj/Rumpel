@@ -107,7 +107,7 @@ public class Recorder
         string jsonString = JsonSerializer.Serialize(_contract, new() { WriteIndented = true });
         var filePath = $"./contracts/{_contract.Name}.rumpel.contract.json";
         var file = new System.IO.FileInfo(filePath);
-        file.Directory.Create(); // if exist.. else this will be a NoOp
+        file.Directory.Create(); // if it doesnt exist.. else this will be a NoOp
         await File.WriteAllTextAsync(filePath, jsonString, Encoding.UTF8);
         Printer.PrintInfo($"saved transaction for request {trans.Request.Method} to {trans.Request.Path}");
 

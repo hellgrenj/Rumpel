@@ -64,6 +64,7 @@ async Task ValidateContract(string[] args)
         ExitWithArgumentMissingOrInvalid(argumentName: "contract path", contractPathPrefix, expectedInput: "path");
 
     var (bearerToken, _) = TryExtractSetting(args, prefix: "--bearer-token=");
+    var (baseUrl, _) = TryExtractSetting(args, prefix: "--base-url=");
 
     Contract contract = null;
     try
@@ -76,7 +77,7 @@ async Task ValidateContract(string[] args)
         Environment.Exit(1);
     }
     var ignoreFlags = ExtractIgnoreFlags(args);
-    var validator = new Validator(contract, ignoreFlags, bearerToken);
+    var validator = new Validator(contract, ignoreFlags, bearerToken, baseUrl);
 
     var validationSucceeded = await validator.Validate();
     if (validationSucceeded)
