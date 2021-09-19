@@ -50,13 +50,13 @@ public class Mocker
                 {
                     context.Response.StatusCode = 400;
                     Printer.PrintInfo($"returning bad request with validation errors for {trans.Request.Method} {trans.Request.Path}");
-                    await Respond(context, trans, JsonSerializer.Serialize(requestBodyErrors));
+                    await Respond(context, JsonSerializer.Serialize(requestBodyErrors));
                     return;
                 }
 
             }
             Printer.PrintInfo($"returning pre-recorded response for {trans.Request.Method} {trans.Request.Path}");
-            await Respond(context, trans, trans.Response.RawBody);
+            await Respond(context, trans.Response.RawBody);
         }
 
     }
@@ -86,7 +86,7 @@ public class Mocker
 
         return (isValid, errorMessages);
     }
-    private async Task Respond(HttpContext context, Transaction trans, string responseString)
+    private async Task Respond(HttpContext context, string responseString)
     {
         var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(responseString));
         await memoryStream.CopyToAsync(context.Response.Body);

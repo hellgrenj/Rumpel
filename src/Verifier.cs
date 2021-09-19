@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Rumpel.Models;
 
-public class Validator
+public class Verifier
 {
     private static HttpClient _httpClient = new HttpClient();
     private Contract _contract;
     private List<string> _ignoreFlags;
 
 
-    public Validator(Contract contract, List<string> ignoreFlags, string bearerToken, string url)
+    public Verifier(Contract contract, List<string> ignoreFlags, string bearerToken, string url)
     {
         _contract = contract;
         _ignoreFlags = ignoreFlags;
@@ -33,10 +33,10 @@ public class Validator
             contract.URL = url;
         }
     }
-    public async Task<bool> Validate()
+    public async Task<bool> Verify()
     {
-        var validationSucceeded = true;
-        Printer.PrintInfo($"validating contract {_contract.Name}");
+        var verificationSucceeded = true;
+        Printer.PrintInfo($"verifying contract {_contract.Name}");
         foreach (var trans in _contract.Transactions)
         {
 
@@ -50,17 +50,17 @@ public class Validator
                     Printer.PrintOK($"✅ {trans.Request.Method} {trans.Request.Path}");
                 else
                 {
-                    validationSucceeded = false;
+                    verificationSucceeded = false;
                     errorMessages.ForEach(error => Printer.PrintErr($"❌ {trans.Request.Method} {trans.Request.Path} failed with error: {error}"));
                 }
             }
             catch (Exception e)
             {
-                validationSucceeded = false;
+                verificationSucceeded = false;
                 Printer.PrintErr($"Failed to handle {trans.Request.Method} {trans.Request.Path}: {e.Message}");
             }
         }
-        return validationSucceeded;
+        return verificationSucceeded;
     }
     private async Task<(bool, List<string>)> ValidateResponse(HttpResponseMessage responseMessage, Transaction trans, List<string> ignoreFlags)
     {

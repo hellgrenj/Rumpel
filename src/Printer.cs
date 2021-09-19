@@ -43,8 +43,8 @@ HELP:
 --record-contract (or the shorthand -r): This starts a new recording of a new contract.
 The expected arguments are: --record-contract|-r --contract-name=<name> --target-api=<url>
 
---validate-contract (or the shorthand -v): This validates (tests) a contract.
-The expected arguments are: --validate-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>) (--base-url=<url>)
+--verify-contract (or the shorthand -v): This verifies (tests) a contract.
+The expected arguments are: --verify-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>) (--base-url=<url>)
 (ignore flags, bearer token and base url are optional)  
 
 --mock-provider (or the shorthand -m): This mocks a provider based on a contract.
@@ -52,9 +52,9 @@ The expected arguments are: --mock-provider|m --contract=<path>
 ";
         var ignoreFlagsInfo = @"ignoreFlags = 
 
-The validator can be told to ignore specific assertions. 
+The verifyer can be told to ignore specific assertions. 
 Example with ignore flags:
---validate-contract|-v --contract=<path> --ignore-assert-status-code
+--verify-contract|-v --contract=<path> --ignore-assert-status-code
 
 These are the available ignoreFlags:";
 

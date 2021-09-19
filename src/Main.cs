@@ -17,14 +17,15 @@ switch (args[0])
 {
     case "--help":
     case "-h": Printer.PrintHelp(); break;
-    case "--version": Printer.PrintInfo("Rumpel v0.2.1"); break;
+    case "--version": Printer.PrintInfo("Rumpel v0.3.0"); break;
     case "--record-contract":
     case "-r": await RecordContract(args); break;
-    case "--validate-contract":
-    case "-v": await ValidateContract(args); break;
+    case "--validate-contract": Printer.PrintErr("--validate-contract has been replaced with --verify-contract"); Environment.Exit(1); break;
+    case "--verify-contract":
+    case "-v": await VerifyContract(args); break;
     case "--mock-provider":
     case "-m": await MockProvider(args); break;
-    default: Printer.PrintErr($"unknown argument {args[0]}"); break;
+    default: Printer.PrintErr($"unknown argument {args[0]}"); Environment.Exit(1); break;
 
 }
 
@@ -50,11 +51,11 @@ async Task RecordContract(string[] args)
     var recorder = new Recorder(contract);
     await recorder.Record();
 }
-async Task ValidateContract(string[] args)
+async Task VerifyContract(string[] args)
 {
     if (args.Length < 2)
     {
-        Printer.PrintErr("missing arguments, expecting: --validate-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>)");
+        Printer.PrintErr("missing arguments, expecting: --verify-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>)");
         Environment.Exit(1);
     }
 
@@ -77,10 +78,10 @@ async Task ValidateContract(string[] args)
         Environment.Exit(1);
     }
     var ignoreFlags = ExtractIgnoreFlags(args);
-    var validator = new Validator(contract, ignoreFlags, bearerToken, baseUrl);
+    var verifier = new Verifier(contract, ignoreFlags, bearerToken, baseUrl);
 
-    var validationSucceeded = await validator.Validate();
-    if (validationSucceeded)
+    var verificationSucceeded = await verifier.Verify();
+    if (verificationSucceeded)
     {
         Printer.PrintOK($"\nContract test passed! (contract: {contract.Name})".ToUpper());
     }
