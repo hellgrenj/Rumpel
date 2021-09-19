@@ -39,7 +39,7 @@ Contract verification supports bearer tokens and you can skip certain assertions
 Run the --help command for more information.   
 This should be a part of the Providers CI/CD pipeline, see ./tests/integration for an example on how to do this with docker-compose.  
 **screenshots**  
-![./img/successfulVerification.jpg](./img/successfulVerification.jpg)  
+![./img/successfulVerification.png](./img/successfulVerification.png)  
 ![./img/failedVerification.png](./img/failedVerification.png)   
 **Customizations**  
 You can customize the verification per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*. A Customization has 3 properties: The name of the target *Object Property*, The name of the *Action* and at what Depth in the JSON the property is found. (is it a first level property or a property in a nested object..)
