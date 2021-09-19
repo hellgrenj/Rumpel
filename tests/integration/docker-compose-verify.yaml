@@ -2,7 +2,7 @@ version: '3'
 services:
   rumpel:
     build: ../../src
-    command: --validate-contract --contract-path=./contracts/consumer-api.rumpel.contract.json --bearer-token=$BEARER_TOKEN
+    command: --verify-contract --contract-path=./contracts/consumer-api.rumpel.contract.json --bearer-token=$BEARER_TOKEN
     ports:
       - '8181:8181'
     volumes:

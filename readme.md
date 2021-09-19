@@ -9,16 +9,20 @@
 **Docker**:   https://hub.docker.com/r/hellgrenj/rumpel.  
 ... Or build from source to target any platform dotnet supports.  
 
+**breaking change!**  
+v0.3.0 has one (1) breaking change. The command *--validate-contract* has been replaced with the 
+command *--verify-contract*.  
+
 ## Use
 
 
-Record a consumer-driven contract against a known and reproducible state of the API and system under test (SUT). Use the created contract to validate that the API still works for this specific consumer when making changes to the API. Make sure you validate against the same SUT-state as you recorded against.  
+Record a consumer-driven contract against a known and reproducible state of the API and system under test (SUT). Use the created contract to verify that the API still works for this specific consumer when making changes to the API. Make sure you verify against the same SUT-state as you recorded against.  
 
 You can also use the contract on the consumer side to mock the provider in local development. In this mode Rumpel will validate the consumer requests, making sure that the consumer upholds its end of the contract.  
 
 ### tldr
 ``./Rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
-``./Rumpel --validate-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+``./Rumpel --verify-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
 ``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``  
 ### Rumpel can do **3** things:     
  1. **Record a contract** (i.e turning your implicit contract into an explicit one).   
@@ -28,16 +32,17 @@ Rumpel listens on port 8181 or the number set in the environment variable **RUMP
 **screenshot**   
 ![./img/recording.png](./img/recording.png)  
 
-2. **Validate a contract** (i.e making sure the API still works for a specific consumer)   ``./Rumpel --validate-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
-![./img/validating.jpg](./img/validating.jpg)     
-Validation mode supports bearer tokens and you can skip certain assertions with   **ignore-flags**.     
+2. **Verify a contract** (i.e making sure the API still works for a specific consumer)   
+``./Rumpel --verify-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+![./img/verifying.jpg](./img/verifying.jpg)     
+Contract verification supports bearer tokens and you can skip certain assertions with   **ignore-flags**.     
 Run the --help command for more information.   
 This should be a part of the Providers CI/CD pipeline, see ./tests/integration for an example on how to do this with docker-compose.  
 **screenshots**  
-![./img/validating.png](./img/validating.png)  
-![./img/failedValidation.png](./img/failedValidation.png)   
+![./img/successfulVerification.jpg](./img/successfulVerification.jpg)  
+![./img/failedVerification.png](./img/failedVerification.png)   
 **Customizations**  
-You can customize the validation per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*. A Customization has 3 properties: The name of the target *Object Property*, The name of the *Action* and at what Depth in the JSON the property is found. (is it a first level property or a property in a nested object..)
+You can customize the verification per transaction by manually adding Customizations in the contract. In the example below a Customization is added that instructs Rumpel to ignore the object property *name*. A Customization has 3 properties: The name of the target *Object Property*, The name of the *Action* and at what Depth in the JSON the property is found. (is it a first level property or a property in a nested object..)
 ![./img/customizations.png](./img/customizations.png) 
 **Available Customizations**  
 - CompareObjectPropertyValues *(have Rumpel assert that the value is the same as the recorded value)*  
@@ -56,7 +61,7 @@ In this mode Rumpel validates the requests sent by the consumer.
 ### Rumpel has 5 commands:
 
 ``--record-contract`` or the shorthand ``-r``  
-``--validate-contract`` or the shorthand ``-v``  
+``--verify-contract`` or the shorthand ``-v``  
 ``--mock-provider`` or the shorthand ``-m``  
 ``--help`` or the shorthand ``-h``  
 ``--version``   

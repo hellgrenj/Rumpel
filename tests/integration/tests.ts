@@ -1,4 +1,4 @@
-import { getValidationResult, sleep, waitForEndpoint } from "./util.ts";
+import { getVerificationResult, sleep, waitForEndpoint } from "./util.ts";
 import * as Colors from "https://deno.land/std@0.95.0/fmt/colors.ts";
 
 console.log("trying to cleanup prev run");
@@ -17,13 +17,13 @@ const cleaningUpPrevRecordScenario = Deno.run({
   stderr: "piped",
 });
 await cleaningUpPrevRecordScenario.status();
-const cleaningUpPrevValidateScenario = Deno.run({
-  cmd: ["docker-compose", "--file", "docker-compose-validate.yaml", "down"],
+const cleaningUpPrevVerifyScenario = Deno.run({
+  cmd: ["docker-compose", "--file", "docker-compose-verify.yaml", "down"],
   stdout: "piped",
   stdin: "piped",
   stderr: "piped",
 });
-await cleaningUpPrevValidateScenario.status();
+await cleaningUpPrevVerifyScenario.status();
 const cleaningUpPrevMockScenario = Deno.run({
   cmd: ["docker-compose", "--file", "docker-compose-mock.yaml", "down"],
   stdout: "piped",
@@ -111,7 +111,7 @@ contract.Transactions.filter((t: any) =>
 ).forEach((t: any) => {
   // copy so original is left for the mocker test below...
   contract.Transactions.splice(contract.Transactions.indexOf(t), 0, JSON.parse(JSON.stringify(t)));
-  // create a V2 with customizations.. (response still expects property name, but IgnoreObjectProperty customization makes the validation pass anyway..)
+  // create a V2 with customizations.. (response still expects property name, but IgnoreObjectProperty customization makes the verification pass anyway..)
   t.Request.Path = "/V2/cakes/1";
   t.Customizations.push({
     PropertyName: "name",
@@ -126,7 +126,7 @@ Deno.writeTextFileSync(
 
 
 
-console.log(Colors.blue("starting validation scenario.."));
+console.log(Colors.blue("starting verification scenario.."));
 Deno.run({
   env: {
     "BEARER_TOKEN": jwt,
@@ -134,7 +134,7 @@ Deno.run({
   cmd: [
     "docker-compose",
     "--file",
-    "docker-compose-validate.yaml",
+    "docker-compose-verify.yaml",
     "up",
     "--build",
   ],
@@ -146,23 +146,23 @@ Deno.run({
 await sleep(10000);
 
 console.log("waiting for Rumpel to be done..");
-const validationResult = await getValidationResult();
-console.log("Rumpel validation is done!");
+const verificationResult = await getVerificationResult();
+console.log("Rumpel verification is done!");
 
-const validationSucceeded = validationResult.includes(
+const verificationSucceeded = verificationResult.includes(
   "CONTRACT TEST PASSED! (CONTRACT: CONSUMER-API)",
 );
-if (validationSucceeded) {
-  console.log(Colors.green("validation succeeded"));
+if (verificationSucceeded) {
+  console.log(Colors.green("verification succeeded"));
 }
-console.log(Colors.blue("stopping validation scenario.."));
-const stoppingValidationScenario = Deno.run({
-  cmd: ["docker-compose", "--file", "docker-compose-validate.yaml", "down"],
+console.log(Colors.blue("stopping verification scenario.."));
+const stoppingVerificationScenario = Deno.run({
+  cmd: ["docker-compose", "--file", "docker-compose-verify.yaml", "down"],
   stdout: "piped",
   stdin: "piped",
   stderr: "piped",
 });
-await stoppingValidationScenario.status();
+await stoppingVerificationScenario.status();
 
 console.log(Colors.blue("starting mocking scenario.."));
 const mockProviderScenario = Deno.run({
@@ -212,7 +212,7 @@ const stopApiProcess = Deno.run({
 });
 await stopApiProcess.status();
 
-if (validationSucceeded && mockingSucceeded) {
+if (verificationSucceeded && mockingSucceeded) {
   console.log(
     Colors.bold(Colors.green("integration tests passed!".toUpperCase())),
   );
@@ -220,6 +220,6 @@ if (validationSucceeded && mockingSucceeded) {
   console.log(
     Colors.bold(Colors.red("integration tests failed!".toUpperCase())),
   );
-  console.log(validationResult);
+  console.log(verificationResult);
   Deno.exit(1);
 }
