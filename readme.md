@@ -17,19 +17,19 @@ Record a consumer-driven contract against a known and reproducible state of the 
 You can also use the contract on the consumer side to mock the provider in local development. In this mode Rumpel will validate the consumer requests, making sure that the consumer upholds its end of the contract.  
 
 ### tldr
-``./Rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
-``./Rumpel --verify-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
-``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+``./rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
+``./rumpel --verify-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+``./rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``  
 ### Rumpel can do **3** things:     
  1. **Record a contract** (i.e turning your implicit contract into an explicit one).   
-``./Rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
+``./rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
 ![./img/recording.jpg](./img/recording.jpg)   
 Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**   
 **screenshot**   
 ![./img/recording.png](./img/recording.png)  
 
 2. **Verify a contract** (i.e making sure the API still works for a specific consumer)   
-``./Rumpel --verify-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+``./rumpel --verify-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
 ![./img/verifying.jpg](./img/verifying.jpg)     
 Contract verification supports bearer tokens and you can skip certain assertions with   **ignore-flags**.     
 Run the --help command for more information.   
@@ -46,7 +46,7 @@ You can customize the verification per transaction by manually adding Customizat
 
 
 3. **Mock a provider/API**  
-``./Rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
+``./rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
 ![./img/mocking.jpg](./img/mocking.jpg)  
 This can be used in local dev environments to mock dependencies, see ./tests/integration for an example on how to do this with docker-compose.  
 Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**.    
