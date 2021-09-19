@@ -10,7 +10,7 @@
 ... Or build from source to target any platform dotnet supports.  
 
 **breaking change!**  
-v0.3.0 has one (1) breaking change.  
+v0.3.0 has one (1) breaking change:  
 The command *--validate-contract* has been replaced with the command *--verify-contract*.  
 
 ## Use
