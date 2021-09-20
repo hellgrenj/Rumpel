@@ -24,7 +24,7 @@ public class Verifier
 
         if (!String.IsNullOrEmpty(bearerToken))
         {
-            Printer.PrintInfo($"adding bearer token to all requests (token: {bearerToken}");
+            Printer.PrintInfo($"adding bearer token to all requests (token: {bearerToken})");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
         }
         if (!String.IsNullOrEmpty(url))

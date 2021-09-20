@@ -44,17 +44,17 @@ HELP:
 The expected arguments are: --record-contract|-r --contract-name=<name> --target-api=<url>
 
 --verify-contract (or the shorthand -v): This verifies (tests) a contract.
-The expected arguments are: --verify-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>) (--base-url=<url>)
+The expected arguments are: --verify-contract|-v --contract-path=<path> (ignore flags) (--bearer-token=<token>) (--base-url=<url>)
 (ignore flags, bearer token and base url are optional)  
 
 --mock-provider (or the shorthand -m): This mocks a provider based on a contract.
-The expected arguments are: --mock-provider|m --contract=<path>
+The expected arguments are: --mock-provider|-m --contract-path=<path>
 ";
         var ignoreFlagsInfo = @"ignoreFlags = 
 
 The verifyer can be told to ignore specific assertions. 
 Example with ignore flags:
---verify-contract|-v --contract=<path> --ignore-assert-status-code
+--verify-contract|-v --contract-path=<path> --ignore-assert-status-code
 
 These are the available ignoreFlags:";
 
