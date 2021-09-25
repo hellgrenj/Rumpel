@@ -16,10 +16,16 @@ Record a consumer-driven contract against a known and reproducible state of the 
 
 You can also use the contract on the consumer side to mock the provider in local development. In this mode Rumpel will validate the consumer requests, making sure that the consumer upholds its end of the contract.  
 
+
 ### tldr
 ``rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
 ``rumpel --verify-contract --contract-path=./contracts/msA-msB.rumpel.contract.json``  
 ``rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``  
+
+### examples
+Demo application: [artlab](https://github.com/hellgrenj/artlab)  
+*a demo of Docker, Kubernetes and Skaffold where Rumpel is used for recording a contract as well as mocking a dependency.*
+
 ### Rumpel can do **3** things:     
  1. **Record a contract** (i.e turning your implicit contract into an explicit one).   
 ``rumpel --record-contract --target-api=http://localhost:8080 --contract-name=msA-msB``  
