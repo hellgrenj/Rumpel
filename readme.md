@@ -24,7 +24,7 @@ You can also use the contract on the consumer side to mock the provider in local
 
 ### examples
 Demo application: [artlab](https://github.com/hellgrenj/artlab)  
-*a demo of Docker, Kubernetes and Skaffold where Rumpel is used for recording a contract as well as mocking a dependency.*
+*a demo of Docker, Kubernetes and Skaffold where Rumpel is used to record a contract and mock a dependency.*
 
 ### Rumpel can do **3** things:     
  1. **Record a contract** (i.e turning your implicit contract into an explicit one).   
