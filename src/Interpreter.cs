@@ -21,32 +21,21 @@ public static class Interpreter
         {
             case JsonValueKind.Object:
                 var (objectOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson.GetRawText(), json.GetRawText(), ignoreFlags, customizations);
-                if (!objectOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(objectPropertiesErrors);
-                }
+                isValid = objectOk ? isValid : false;
+                errorMessages.AddRange(objectPropertiesErrors);
                 break;
             case JsonValueKind.Array:
                 var (arrayOk, arrayErrors) = AssertArray(expectedJson, json, ignoreFlags, customizations);
-                if (!arrayOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(arrayErrors);
-                }
+                isValid = arrayOk ? isValid : false;
+                errorMessages.AddRange(arrayErrors);
                 break;
             default:
                 var (singleValueOk, singleValueErrors) = AssertSingleValue(expectedJson, json);
-                if (!singleValueOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(singleValueErrors);
-                }
+                isValid = singleValueOk ? isValid : false;
+                errorMessages.AddRange(singleValueErrors);
                 break;
         }
-
         return (isValid, errorMessages);
-
     }
 
     private static (bool, List<string>) AssertArray(JsonElement expectedJson, JsonElement json, List<string> ignoreFlags, List<Customization> customizations, int nestedDepth = 0, string nestedInParentType = null)
@@ -54,48 +43,35 @@ public static class Interpreter
         var isValid = true;
         var errorMessages = new List<string>();
         var (arrayLengthOk, arrayLengthErrors) = AssertJsonArrayLength(expectedJson, json, ignoreFlags);
-        if (!arrayLengthOk)
-        {
-            isValid = false;
-            errorMessages.AddRange(arrayLengthErrors);
-        }
+        isValid = arrayLengthOk ? isValid : false;
+        errorMessages.AddRange(arrayLengthErrors);
+
         if (json.GetArrayLength() <= 0 && expectedJson.GetArrayLength() <= 0)
             return (isValid, errorMessages);
 
         for (var i = 0; i < expectedJson.GetArrayLength(); i++)
         {
-
             if (expectedJson[i].ValueKind.ToString() == JsonValueKind.Array.ToString())
             {
                 var nextLevel = nestedDepth + 1;
                 var (nestedArrayOk, nestedArrayErrors) = AssertArray(expectedJson[i], json[i], ignoreFlags, customizations, nextLevel, "array");
-                if (!nestedArrayOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(nestedArrayErrors);
-                }
+                isValid = nestedArrayOk ? isValid : false;
+                errorMessages.AddRange(nestedArrayErrors);
             }
             else if (expectedJson[i].ValueKind.ToString() == JsonValueKind.Object.ToString())
             {
                 var nextLevel = nestedDepth + 1;
                 var (objectPropertiesOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson[i].GetRawText(), json[i].GetRawText(), ignoreFlags, customizations, nextLevel, "array");
-                if (!objectPropertiesOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(objectPropertiesErrors);
-                }
+                isValid = objectPropertiesOk ? isValid : false;
+                errorMessages.AddRange(objectPropertiesErrors);
             }
             else
             {
                 var (singleValueOk, singleValueErrors) = AssertSingleValue(expectedJson[i], json[i], nestedDepth, "array");
-                if (!singleValueOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(singleValueErrors);
-                }
+                isValid = singleValueOk ? isValid : false;
+                errorMessages.AddRange(singleValueErrors);
             }
         }
-
         return (isValid, errorMessages);
     }
 
@@ -134,22 +110,15 @@ public static class Interpreter
             {
                 var nextLevel = nestedDepth + 1;
                 var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), jsonObj[key].GetRawText(), ignoreFlags, customizations, nextLevel, "object");
-                if (!nestedObjectPropertiesOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(nestedObjectPropertiesErrors);
-                }
-
+                isValid = nestedObjectPropertiesOk ? isValid : false;
+                errorMessages.AddRange(nestedObjectPropertiesErrors);
             }
             else if (jsonObj[key].ValueKind == JsonValueKind.Array)
             {
                 var nextLevel = nestedDepth + 1;
                 var (arrayOk, arrayErrors) = AssertArray(expectedJsonObj[key], jsonObj[key], ignoreFlags, customizations, nextLevel, "object");
-                if (!arrayOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(arrayErrors);
-                }
+                isValid = arrayOk ? isValid : false;
+                errorMessages.AddRange(arrayErrors);
             }
             else if (jsonObj[key].ValueKind.ToString() != expectedJsonObj[key].ValueKind.ToString())
             {
@@ -162,15 +131,10 @@ public static class Interpreter
             && CustomizedTo(Actions.CompareObjectPropertyValues, customizations, key, nestedDepth))
             {
                 var (propertyValueOk, propertyValueErrors) = AssertPropertyValue(key, expectedJsonObj, jsonObj, nestedDepth, nestedInParentType);
-                if (!propertyValueOk)
-                {
-                    isValid = false;
-                    errorMessages.AddRange(propertyValueErrors);
-                }
+                isValid = propertyValueOk ? isValid : false;
+                errorMessages.AddRange(propertyValueErrors);
             }
-
         }
-
         return (isValid, errorMessages);
     }
     private static (bool, List<string>) AssertSingleValue(JsonElement expectedJson, JsonElement json, int nestedDepth = 0,
