@@ -4,10 +4,27 @@
 
 ![./img/rumpel.jpeg](./img/rumpel.jpeg)
 
-## Install   
-**Binaries for linux, mac and win**: See releases.  
-**Docker**:   https://hub.docker.com/r/hellgrenj/rumpel.  
-... Or build from source to target any platform dotnet supports.  
+## Install  
+
+copy+paste one of the following commands in your terminal.
+
+**Linux x64**
+```
+curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-linux-x64 && \
+sudo install rumpel /usr/local/bin/
+```
+
+**macOS x64**
+```
+curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-osx-x64 && \
+sudo install rumpel /usr/local/bin/
+```
+**win**  
+download the [latest exe](https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-win-x64.exe), rename it ``rumpel`` and put it in your PATH. 
+
+**Docker**:   
+https://hub.docker.com/r/hellgrenj/rumpel.  
+
 
 ## Use
 
