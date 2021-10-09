@@ -16,8 +16,7 @@ export const waitForEndpoint = async (url: string): Promise<void> => {
       return;
     }
   } catch {
-    console.log(`${url} not ready, trying again in 3 seconds..`);
-    await sleep(3000);
+    await sleep(1000);
     return waitForEndpoint(url);
   }
 };
@@ -46,8 +45,7 @@ export const getVerificationResult = async (): Promise<string> => {
     });
     return new TextDecoder().decode(await verificationText.output());
   } else {
-    console.log("Rumpel verification not done yet, checking again in 3 seconds");
-    await sleep(3000);
+    await sleep(1000);
     return getVerificationResult();
   }
 };

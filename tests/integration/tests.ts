@@ -143,8 +143,6 @@ Deno.run({
   stderr: "piped",
 });
 
-await sleep(10000);
-
 console.log("waiting for Rumpel to be done..");
 const verificationResult = await getVerificationResult();
 console.log("Rumpel verification is done!");
