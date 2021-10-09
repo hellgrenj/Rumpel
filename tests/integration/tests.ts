@@ -1,4 +1,4 @@
-import { getVerificationResult, sleep, waitForEndpoint } from "./util.ts";
+import { getVerificationResult, waitForEndpoint } from "./util.ts";
 import * as Colors from "https://deno.land/std@0.95.0/fmt/colors.ts";
 
 console.log("trying to cleanup prev run");
