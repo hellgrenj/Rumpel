@@ -25,7 +25,7 @@ curl -Lo rumpel.exe https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1
 mkdir "%USERPROFILE%\AppData\Local\Rumpel"
 copy rumpel.exe "%USERPROFILE%\AppData\Local\Rumpel"
 ```
-and %USERPROFILE%\AppData\Local\Rumpel in your PATH. 
+and add %USERPROFILE%\AppData\Local\Rumpel in your PATH. 
 
 **Docker**:   
 https://hub.docker.com/r/hellgrenj/rumpel.  
