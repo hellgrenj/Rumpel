@@ -19,8 +19,13 @@ sudo install rumpel /usr/local/bin/
 curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-osx-x64 && \
 sudo install rumpel /usr/local/bin/
 ```
-**win**  
-download the [latest exe](https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-win-x64.exe), rename it ``rumpel`` and put it in your PATH. 
+**win** 
+```
+curl -Lo rumpel.exe https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-win-x64.exe
+mkdir "%USERPROFILE%\AppData\Local\Rumpel"
+copy rumpel.exe "%USERPROFILE%\AppData\Local\Rumpel"
+```
+and %USERPROFILE%\AppData\Local\Rumpel in your PATH. 
 
 **Docker**:   
 https://hub.docker.com/r/hellgrenj/rumpel.  
