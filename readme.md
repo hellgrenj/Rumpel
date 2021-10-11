@@ -19,7 +19,7 @@ sudo install rumpel /usr/local/bin/
 curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-osx-x64 && \
 sudo install rumpel /usr/local/bin/
 ```
-**win** 
+**win x64**  
 ```
 curl -Lo rumpel.exe https://github.com/hellgrenj/Rumpel/releases/download/v0.3.1/rumpel-win-x64.exe
 mkdir "%USERPROFILE%\AppData\Local\Rumpel"
