@@ -87,7 +87,7 @@ In this mode Rumpel validates the requests sent by the consumer.
 
 ## Develop 
 
-You need the following installed on your dev machinge:  
+You need the following installed on your dev machine:  
 * dotnet 5.x
 * docker 20.10.x
 * docker-compose 1.29.x
