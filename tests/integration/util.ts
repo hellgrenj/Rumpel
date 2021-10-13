@@ -20,32 +20,3 @@ export const waitForEndpoint = async (url: string): Promise<void> => {
     return waitForEndpoint(url);
   }
 };
-export const getVerificationResult = async (): Promise<string> => {
-  const watchRumpel = Deno.run({
-    cmd: [
-      "docker",
-      "inspect",
-      "integration_rumpel_1",
-    ],
-    stdout: "piped",
-    stdin: "piped",
-    stderr: "piped",
-  });
-  const rumpelResult = new TextDecoder().decode(await watchRumpel.output());
-  if (rumpelResult.includes('"Running": false')) {
-    const verificationText = Deno.run({
-      cmd: [
-        "docker",
-        "logs",
-        "integration_rumpel_1",
-      ],
-      stdout: "piped",
-      stdin: "piped",
-      stderr: "piped",
-    });
-    return new TextDecoder().decode(await verificationText.output());
-  } else {
-    await sleep(1000);
-    return getVerificationResult();
-  }
-};
