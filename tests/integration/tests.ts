@@ -1,4 +1,4 @@
-import { getVerificationResult, waitForEndpoint } from "./util.ts";
+import { waitForEndpoint } from "./util.ts";
 import * as Colors from "https://deno.land/std@0.95.0/fmt/colors.ts";
 
 console.log("trying to cleanup prev run");
@@ -127,7 +127,7 @@ Deno.writeTextFileSync(
 
 
 console.log(Colors.blue("starting verification scenario.."));
-Deno.run({
+const verificationScenario = Deno.run({
   env: {
     "BEARER_TOKEN": jwt,
   },
@@ -144,7 +144,7 @@ Deno.run({
 });
 
 console.log("waiting for Rumpel to be done..");
-const verificationResult = await getVerificationResult();
+const verificationResult = new TextDecoder().decode(await verificationScenario.output());
 console.log("Rumpel verification is done!");
 
 const verificationSucceeded = verificationResult.includes(
