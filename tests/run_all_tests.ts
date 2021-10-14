@@ -37,7 +37,7 @@ if (unitTestsPassed && integrationTestsPassed) {
     console.log(unitResult);
     console.log(Colors.red("❌ Unit tests failed!".toUpperCase()));
   }
-  if (!integrationResult) {
+  if (!integrationTestsPassed) {
     console.log(integrationResult);
     console.log(Colors.red("❌ integration tests failed!".toUpperCase()));
   }
