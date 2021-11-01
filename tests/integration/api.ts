@@ -102,7 +102,7 @@ const getCakeV2 = (
   delete modifiedCake.name;
   console.log('V2 returning cake', modifiedCake);
   response.status = 200;
-  response.body = cake;
+  response.body = modifiedCake;
 };
 const addCake = async (
   { request, response }: { request: any; response: any },
