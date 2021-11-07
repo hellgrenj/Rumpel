@@ -112,7 +112,7 @@ namespace unit
             {
                 new Customization()
                 {
-                    Action = Actions.IgnoreObjectProperty,
+                    Action = CustomizationActions.IgnoreObjectProperty,
                     PropertyName = "age",
                     Depth = 0
                 }
@@ -138,7 +138,7 @@ namespace unit
             {
                 new()
                 {
-                    Action = Actions.CompareObjectPropertyValues,
+                    Action = CustomizationActions.CompareObjectPropertyValues,
                     PropertyName = "nickname",
                     Depth = 0
                 }
@@ -278,17 +278,17 @@ namespace unit
             var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new() {
                 new() {
                     PropertyName = "prop13",
-                    Action = Actions.CompareObjectPropertyValues,
+                    Action = CustomizationActions.CompareObjectPropertyValues,
                     Depth = 1
                 },
                 new() {
                     PropertyName = "prop14",
-                    Action = Actions.CompareObjectPropertyValues,
+                    Action = CustomizationActions.CompareObjectPropertyValues,
                     Depth = 1
                 },
                 new() {
                     PropertyName = "prop15",
-                    Action = Actions.CompareObjectPropertyValues,
+                    Action = CustomizationActions.CompareObjectPropertyValues,
                     Depth = 1
                 }
             });
