@@ -75,8 +75,14 @@ This can be used in local dev environments to mock dependencies, see ./tests/int
 Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**.    
 In this mode Rumpel validates the requests sent by the consumer.  
 **screenshot**  
-![./img/mocking.png](./img/mocking.png) 
-
+![./img/mocking.png](./img/mocking.png)  
+**Simulated conditions**  
+You can simulate conditions per transaction when mocking a provider by manually adding SpecialConditions in the contract. Every simulated condition has a *Type* and a *Value*, see the screenshot below for an example. You can add one or several simulated conditions, in the example below we are adding 3 different conditions.  
+![./img/simulatedConditions.png](./img/simulatedConditions.png)  
+**Available Types of Simulated conditions and the expected Values**  
+* *Sometimes500* (Rumpel will have this request fail with status code 500 according to the percentage set as the Value. In the example (screenshot) above the request will fail approximately 35% of the time)  
+* *FixedDelay* (Rumpel will add a delay to this request. The Value is the fixed delay in milliseconds)  
+* *RandomDelay* (Rumpel will add a random delay between the min and max value provided in the Value property. The min and max values are expected to be provided with the following syntax: minMilliseconds-maxMilliseconds)  
 ### Rumpel has 5 commands:
 
 ``--record-contract`` or the shorthand ``-r``  
