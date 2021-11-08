@@ -77,7 +77,7 @@ In this mode Rumpel validates the requests sent by the consumer.
 **screenshot**  
 ![./img/mocking.png](./img/mocking.png)  
 **Simulated conditions**  
-You can simulate conditions per transaction when mocking a provider by manually adding SpecialConditions in the contract. Every simulated condition has a *Type* and a *Value*, see the screenshot below for an example. You can add one or several simulated conditions, in the example below we are adding 3 different conditions.  
+You can simulate conditions per transaction when mocking a provider by manually adding SimulatedConditions in the contract. Every simulated condition has a *Type* and a *Value*, see the screenshot below for an example. You can add one or several simulated conditions, in the example below we are adding 3 different conditions.  
 ![./img/simulatedConditions.png](./img/simulatedConditions.png)  
 **Available Types of Simulated conditions and the expected Values**  
 * *Sometimes500* (Rumpel will have this request fail with status code 500 according to the percentage set as the Value. In the example (screenshot) above the request will fail approximately 35% of the time)  
