@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Rumpel.Models;
@@ -13,7 +14,7 @@ public class Mocker
 {
     private Contract _contract;
     public Mocker(Contract contract) => _contract = contract;
-
+    private static Random random = new();
     public async Task Run()
     {
         Printer.PrintInfo($"mocking provider for contract {_contract.Name}");
@@ -36,28 +37,56 @@ public class Mocker
         }
         else
         {
+            context.Response.StatusCode = GetStatusCode(trans);
+            if (context.Response.StatusCode == 500)
+                await Respond(context, String.Empty, trans.SimulatedConditions);
 
-            context.Response.StatusCode = (int)trans.Response.StatusCode;
             AddHeaders(context, trans);
-
             if (HttpMethods.IsPost(trans.Request.Method) ||
                 HttpMethods.IsPut(trans.Request.Method) ||
                 HttpMethods.IsPatch(trans.Request.Method))
             {
-
                 var (requestBodyOk, requestBodyErrors) = await ValidateRequestBody(context, trans);
                 if (!requestBodyOk)
                 {
                     context.Response.StatusCode = 400;
                     Printer.PrintInfo($"returning bad request with validation errors for {trans.Request.Method} {trans.Request.Path}");
-                    await Respond(context, JsonSerializer.Serialize(requestBodyErrors));
+                    await Respond(context, JsonSerializer.Serialize(requestBodyErrors), trans.SimulatedConditions);
                     return;
                 }
-
             }
             Printer.PrintInfo($"returning pre-recorded response for {trans.Request.Method} {trans.Request.Path}");
-            await Respond(context, trans.Response.RawBody);
+            await Respond(context, trans.Response.RawBody, trans.SimulatedConditions);
         }
+
+    }
+    private int GetStatusCode(Transaction trans)
+    {
+        var defaultStatusCode = trans.Response.StatusCode;
+        if (trans.SimulatedConditions is null)
+            return defaultStatusCode;
+
+        var sometimes500 = trans.SimulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.Sometimes500);
+        if (sometimes500 is not null)
+        {
+
+            try
+            {
+                var percentage = Int32.Parse(sometimes500.Value);
+                Printer.PrintInfo($"{percentage}% chance the recorded status code will be replaced with 500");
+                var randomNumber = random.Next(100); // between 0-99
+                if (randomNumber < percentage)
+                {
+                    Printer.PrintInfo("simulating a 500");
+                    return 500;
+                }
+            }
+            catch
+            {
+                Printer.PrintErr("could not parse percentage from Value for Sometimes500");
+            }
+        }
+        return defaultStatusCode;
 
     }
     private void AddHeaders(HttpContext context, Transaction trans)
@@ -66,7 +95,6 @@ public class Mocker
         {
             context.Response.Headers[header.Key] = header.Value.ToArray<string>();
         }
-        // removing hop-by-hop-headers https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers#hbh
         context.Response.Headers.Remove("transfer-encoding");
     }
     private async Task<(bool, List<string>)> ValidateRequestBody(HttpContext context, Transaction trans)
@@ -86,10 +114,53 @@ public class Mocker
 
         return (isValid, errorMessages);
     }
-    private async Task Respond(HttpContext context, string responseString)
+    private async Task Respond(HttpContext context, string responseString, List<SimulatedCondition> simulatedConditions)
     {
+        RunAnySimulatedDelays(simulatedConditions);
         var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(responseString));
         await memoryStream.CopyToAsync(context.Response.Body);
         await context.Response.CompleteAsync();
+    }
+    private void RunAnySimulatedDelays(List<SimulatedCondition> simulatedConditions)
+    {
+        if (simulatedConditions is null)
+            return;
+
+        var fixedDelay = simulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.FixedDelay);
+        if (fixedDelay is not null)
+            TrySimulateFixedDelay(fixedDelay);
+
+        var randomDelay = simulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.RandomDelay);
+        if (randomDelay is not null)
+            TrySimulateRandomDelay(randomDelay);
+    }
+    private void TrySimulateFixedDelay(SimulatedCondition fixedDelay)
+    {
+        try
+        {
+            var delayInMilliseconds = Int32.Parse(fixedDelay.Value);
+            Printer.PrintInfo($"simulating a fixed delay of {delayInMilliseconds} milliseconds");
+            Thread.Sleep(delayInMilliseconds);
+        }
+        catch
+        {
+            Printer.PrintErr($"could not parse delay in Value for FixedDelay");
+        }
+    }
+    private void TrySimulateRandomDelay(SimulatedCondition randomDelay)
+    {
+        try
+        {
+            var split = randomDelay.Value.Split("-");
+            var minDelay = Int32.Parse(split[0]);
+            var maxDelay = Int32.Parse(split[1]);
+            var delayInMilliseconds = random.Next(minDelay, maxDelay);
+            Printer.PrintInfo($"simulating a random delay of {delayInMilliseconds} milliseconds");
+            Thread.Sleep(delayInMilliseconds);
+        }
+        catch
+        {
+            Printer.PrintErr($"could not parse delay min-max range in Value for RandomDelay. Expecting min-max in milliseconds, e.g 100-2000");
+        }
     }
 }

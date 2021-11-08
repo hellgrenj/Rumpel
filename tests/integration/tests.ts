@@ -100,7 +100,7 @@ await stoppingRecordScenario.status();
 
 console.log(
   Colors.yellow(
-    "applying customizations to request GET /cakes/1 and simulate a change in the API",
+    "\napplying customizations to request GET /cakes/1 and simulate a change in the API\n",
   ),
 );
 const contract = JSON.parse(
@@ -110,7 +110,11 @@ contract.Transactions.filter((t: any) =>
   t.Request.Path == "/cakes/1" && t.Request.Method == "GET"
 ).forEach((t: any) => {
   // copy so original is left for the mocker test below...
-  contract.Transactions.splice(contract.Transactions.indexOf(t), 0, JSON.parse(JSON.stringify(t)));
+  contract.Transactions.splice(
+    contract.Transactions.indexOf(t),
+    0,
+    JSON.parse(JSON.stringify(t)),
+  );
   // create a V2 with customizations.. (response still expects property name, but IgnoreObjectProperty customization makes the verification pass anyway..)
   t.Request.Path = "/V2/cakes/1";
   t.Customizations.push({
@@ -123,8 +127,6 @@ Deno.writeTextFileSync(
   "./contracts/consumer-api.rumpel.contract.json",
   JSON.stringify(contract, null, 2),
 );
-
-
 
 console.log(Colors.blue("starting verification scenario.."));
 const verificationScenario = Deno.run({
@@ -144,7 +146,9 @@ const verificationScenario = Deno.run({
 });
 
 console.log("waiting for Rumpel to be done..");
-const verificationResult = new TextDecoder().decode(await verificationScenario.output());
+const verificationResult = new TextDecoder().decode(
+  await verificationScenario.output(),
+);
 console.log("Rumpel verification is done!");
 
 const verificationSucceeded = verificationResult.includes(
@@ -162,6 +166,32 @@ const stoppingVerificationScenario = Deno.run({
 });
 await stoppingVerificationScenario.status();
 
+console.log(
+  Colors.yellow(
+    "\napplying simulated conditions to request GET /cakes\n",
+  ),
+);
+contract.Transactions.filter((t: any) =>
+  t.Request.Path == "/cakes" && t.Request.Method == "GET"
+).forEach((t: any) => {
+  t.SimulatedConditions.push({
+    Type: "Sometimes500",
+    Value: "35",
+  });
+  t.SimulatedConditions.push({
+    Type: "FixedDelay",
+    Value: "500",
+  });
+  t.SimulatedConditions.push({
+    Type: "RandomDelay",
+    Value: "100-4000",
+  });
+});
+Deno.writeTextFileSync(
+  "./contracts/consumer-api.rumpel.contract.json",
+  JSON.stringify(contract, null, 2),
+);
+
 console.log(Colors.blue("starting mocking scenario.."));
 const mockProviderScenario = Deno.run({
   cmd: [
@@ -171,7 +201,6 @@ const mockProviderScenario = Deno.run({
     "up",
     "--build",
   ],
-  stdout: "piped",
   stdin: "piped",
   stderr: "piped",
 });

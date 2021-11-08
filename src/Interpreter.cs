@@ -98,7 +98,7 @@ public static class Interpreter
         {
             if (jsonObj.ContainsKey(key) == false)
             {
-                if (!CustomizedTo(Actions.IgnoreObjectProperty, customizations, key, nestedDepth))
+                if (!CustomizedTo(CustomizationActions.IgnoreObjectProperty, customizations, key, nestedDepth))
                 {
                     isValid = false;
                     var errorMessage = $"Object missing property {key} of type {expectedJsonObj[key].ValueKind.ToString()}";
@@ -128,7 +128,7 @@ public static class Interpreter
                 errorMessages.Add(errorMessage);
             }
             else if (jsonObj[key].ValueKind.ToString() == expectedJsonObj[key].ValueKind.ToString()
-            && CustomizedTo(Actions.CompareObjectPropertyValues, customizations, key, nestedDepth))
+            && CustomizedTo(CustomizationActions.CompareObjectPropertyValues, customizations, key, nestedDepth))
             {
                 var (propertyValueOk, propertyValueErrors) = AssertPropertyValue(key, expectedJsonObj, jsonObj, nestedDepth, nestedInParentType);
                 isValid = propertyValueOk ? isValid : false;

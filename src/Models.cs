@@ -7,8 +7,8 @@ namespace Rumpel.Models
 {
     public static class IgnoreFlags
     {
-        public static string IgnoreAssertStatusCode = "--ignore-assert-status-code";
-        public static string IgnoreAssertArrayLength = "--ignore-assert-array-length";
+        public const string IgnoreAssertStatusCode = "--ignore-assert-status-code";
+        public const string IgnoreAssertArrayLength = "--ignore-assert-array-length";
 
         public static List<string> ToList()
         {
@@ -17,7 +17,7 @@ namespace Rumpel.Models
             var fields = t.GetFields(BindingFlags.Static | BindingFlags.Public);
             foreach (var f in fields)
             {
-                list.Add((f.GetValue(null).ToString())); // null because no instance.. static..
+                list.Add((f.GetValue(null).ToString()));
             }
             return list;
         }
@@ -38,6 +38,7 @@ namespace Rumpel.Models
         public Request Request { get; set; }
         public Response Response { get; set; }
         public List<Customization> Customizations { get; set; } = new();
+        public List<SimulatedCondition> SimulatedConditions { get; set; } = new();
     }
     public class Request
     {
@@ -73,12 +74,19 @@ namespace Rumpel.Models
     {
         public string PropertyName { get; set; }
         public int Depth { get; set; }
-        public string Action { get; set; } 
+        public string Action { get; set; }
     }
-    public class Actions  
+    public class CustomizationActions
     {
-        public static string IgnoreObjectProperty = "IgnoreObjectProperty";
-        public static string CompareObjectPropertyValues = "CompareObjectPropertyValues";
+        public const string IgnoreObjectProperty = "IgnoreObjectProperty";
+        public const string CompareObjectPropertyValues = "CompareObjectPropertyValues";
     }
+    public class SimulatedConditionTypes
+    {
+        public const string FixedDelay = "FixedDelay";
+        public const string RandomDelay = "RandomDelay";
+        public const string Sometimes500 = "Sometimes500";
+    }
+    public record SimulatedCondition(string Type, string Value);
 
 }
