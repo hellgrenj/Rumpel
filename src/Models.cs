@@ -38,7 +38,7 @@ namespace Rumpel.Models
         public Request Request { get; set; }
         public Response Response { get; set; }
         public List<Customization> Customizations { get; set; } = new();
-        public SimulatedConditions SimulatedConditions { get; set; }
+        public List<SimulatedCondition> SimulatedConditions { get; set; }
     }
     public class Request
     {
@@ -81,12 +81,12 @@ namespace Rumpel.Models
         public const string IgnoreObjectProperty = "IgnoreObjectProperty";
         public const string CompareObjectPropertyValues = "CompareObjectPropertyValues";
     }
-    public class SimulatedConditionsTypes
+    public class SimulatedConditionTypes
     {
         public const string FixedDelay = "FixedDelay";
         public const string RandomDelay = "RandomDelay";
         public const string Sometimes500 = "Sometimes500";
     }
-    public record SimulatedConditions(string Type, string Value);
+    public record SimulatedCondition(string Type, string Value);
 
 }

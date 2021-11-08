@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Rumpel.Models;
@@ -36,8 +37,10 @@ public class Mocker
         }
         else
         {
+            context.Response.StatusCode = GetStatusCode(trans);
+            if (context.Response.StatusCode == 500)
+                await Respond(context, String.Empty, trans.SimulatedConditions);
 
-            context.Response.StatusCode = (int)trans.Response.StatusCode;
             AddHeaders(context, trans);
 
             if (HttpMethods.IsPost(trans.Request.Method) ||
@@ -50,14 +53,42 @@ public class Mocker
                 {
                     context.Response.StatusCode = 400;
                     Printer.PrintInfo($"returning bad request with validation errors for {trans.Request.Method} {trans.Request.Path}");
-                    await Respond(context, JsonSerializer.Serialize(requestBodyErrors));
+                    await Respond(context, JsonSerializer.Serialize(requestBodyErrors), trans.SimulatedConditions);
                     return;
                 }
-
             }
             Printer.PrintInfo($"returning pre-recorded response for {trans.Request.Method} {trans.Request.Path}");
-            await Respond(context, trans.Response.RawBody);
+            await Respond(context, trans.Response.RawBody, trans.SimulatedConditions);
         }
+
+    }
+    private int GetStatusCode(Transaction trans)
+    {
+        var defaultStatusCode = trans.Response.StatusCode;
+        if (trans.SimulatedConditions is null)
+            return defaultStatusCode;
+
+        var sometimes500 = trans.SimulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.Sometimes500);
+        if (sometimes500 is not null)
+        {
+            try
+            {
+                var percentage = Int32.Parse(sometimes500.Value);
+                Printer.PrintInfo($"{percentage}% chance the recorded status code will be replaced with 500");
+                var random = new Random();
+                var randomNumber = random.Next(0, 101); //0-100?
+                if (percentage <= randomNumber)
+                {
+                    Printer.PrintInfo("simulating a 500");
+                    return 500;
+                }
+            }
+            catch
+            {
+                Printer.PrintErr("could not parse percentage from Value for Sometimes500");
+            }
+        }
+        return defaultStatusCode;
 
     }
     private void AddHeaders(HttpContext context, Transaction trans)
@@ -86,10 +117,50 @@ public class Mocker
 
         return (isValid, errorMessages);
     }
-    private async Task Respond(HttpContext context, string responseString)
+    private async Task Respond(HttpContext context, string responseString, List<SimulatedCondition> simulatedConditions)
     {
+        RunAnySimulatedDelays(simulatedConditions);
         var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(responseString));
         await memoryStream.CopyToAsync(context.Response.Body);
         await context.Response.CompleteAsync();
+    }
+    private void RunAnySimulatedDelays(List<SimulatedCondition> simulatedConditions)
+    {
+        if (simulatedConditions is null)
+            return;
+
+        var fixedDelay = simulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.FixedDelay);
+        if (fixedDelay is not null)
+        {
+            try
+            {
+                var delayInMilliseconds = Int32.Parse(fixedDelay.Value);
+                Printer.PrintInfo($"simulating a fixed delay of {delayInMilliseconds} milliseconds");
+                Thread.Sleep(delayInMilliseconds);
+            }
+            catch
+            {
+                Printer.PrintErr($"could not parse wait time in Value for FixedDelay");
+            }
+        }
+        var randomDelay = simulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.RandomDelay);
+        if (randomDelay is not null)
+        {
+            try
+            {
+                var split = randomDelay.Value.Split("-");
+                var minDelay = Int32.Parse(split[0]);
+                var maxDelay = Int32.Parse(split[1]);
+                var random = new Random();
+                var delayInMilliseconds = random.Next(minDelay, maxDelay + 1);
+                Printer.PrintInfo($"simulating a random delay of {delayInMilliseconds} milliseconds");
+                Thread.Sleep(delayInMilliseconds);
+            }
+            catch
+            {
+                Printer.PrintErr($"could not parse wait time range in Value for RandomDelay. Expecting min-max, e.g 100-2000");
+            }
+
+        }
     }
 }
