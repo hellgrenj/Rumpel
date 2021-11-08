@@ -294,7 +294,7 @@ namespace unit
             });
 
             Assert.False(isValid);
-            Assert.Equal(errorMessages.Count, 5);
+            Assert.Equal(5, errorMessages.Count);
             
             Assert.Contains("property with name prop13 has the value \"hejsan\" and the expected value is \"hej\" in a nested object (depth 1)", errorMessages[0]);
             Assert.Contains("property with name prop14 has the value 6 and the expected value is 5 in a nested object (depth 1)", errorMessages[1]);
