@@ -14,7 +14,7 @@ public class Mocker
 {
     private Contract _contract;
     public Mocker(Contract contract) => _contract = contract;
-
+    private static Random random = new();
     public async Task Run()
     {
         Printer.PrintInfo($"mocking provider for contract {_contract.Name}");
@@ -69,14 +69,13 @@ public class Mocker
         var sometimes500 = trans.SimulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.Sometimes500);
         if (sometimes500 is not null)
         {
-    
+
             try
             {
                 var percentage = Int32.Parse(sometimes500.Value);
                 Printer.PrintInfo($"{percentage}% chance the recorded status code will be replaced with 500");
-                var random = new Random();
                 var randomNumber = random.Next(100); // between 0-99
-                if (randomNumber <= percentage)
+                if (randomNumber < percentage)
                 {
                     Printer.PrintInfo("simulating a 500");
                     return 500;
@@ -129,36 +128,39 @@ public class Mocker
 
         var fixedDelay = simulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.FixedDelay);
         if (fixedDelay is not null)
-        {
-            try
-            {
-                var delayInMilliseconds = Int32.Parse(fixedDelay.Value);
-                Printer.PrintInfo($"simulating a fixed delay of {delayInMilliseconds} milliseconds");
-                Thread.Sleep(delayInMilliseconds);
-            }
-            catch
-            {
-                Printer.PrintErr($"could not parse delay in Value for FixedDelay");
-            }
-        }
+            TrySimulateFixedDelay(fixedDelay);
+
         var randomDelay = simulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.RandomDelay);
         if (randomDelay is not null)
+            TrySimulateRandomDelay(randomDelay);
+    }
+    private void TrySimulateFixedDelay(SimulatedCondition fixedDelay)
+    {
+        try
         {
-            try
-            {
-                var split = randomDelay.Value.Split("-");
-                var minDelay = Int32.Parse(split[0]);
-                var maxDelay = Int32.Parse(split[1]);
-                var random = new Random();
-                var delayInMilliseconds = random.Next(minDelay, maxDelay);
-                Printer.PrintInfo($"simulating a random delay of {delayInMilliseconds} milliseconds");
-                Thread.Sleep(delayInMilliseconds);
-            }
-            catch
-            {
-                Printer.PrintErr($"could not parse delay min-max range in Value for RandomDelay. Expecting min-max in milliseconds, e.g 100-2000");
-            }
-
+            var delayInMilliseconds = Int32.Parse(fixedDelay.Value);
+            Printer.PrintInfo($"simulating a fixed delay of {delayInMilliseconds} milliseconds");
+            Thread.Sleep(delayInMilliseconds);
+        }
+        catch
+        {
+            Printer.PrintErr($"could not parse delay in Value for FixedDelay");
+        }
+    }
+    private void TrySimulateRandomDelay(SimulatedCondition randomDelay)
+    {
+        try
+        {
+            var split = randomDelay.Value.Split("-");
+            var minDelay = Int32.Parse(split[0]);
+            var maxDelay = Int32.Parse(split[1]);
+            var delayInMilliseconds = random.Next(minDelay, maxDelay);
+            Printer.PrintInfo($"simulating a random delay of {delayInMilliseconds} milliseconds");
+            Thread.Sleep(delayInMilliseconds);
+        }
+        catch
+        {
+            Printer.PrintErr($"could not parse delay min-max range in Value for RandomDelay. Expecting min-max in milliseconds, e.g 100-2000");
         }
     }
 }
