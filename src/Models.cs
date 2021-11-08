@@ -38,7 +38,7 @@ namespace Rumpel.Models
         public Request Request { get; set; }
         public Response Response { get; set; }
         public List<Customization> Customizations { get; set; } = new();
-        public List<SimulatedCondition> SimulatedConditions { get; set; }
+        public List<SimulatedCondition> SimulatedConditions { get; set; } = new();
     }
     public class Request
     {

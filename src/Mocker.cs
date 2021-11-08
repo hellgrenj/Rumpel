@@ -71,15 +71,16 @@ public class Mocker
         var sometimes500 = trans.SimulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.Sometimes500);
         if (sometimes500 is not null)
         {
+    
             try
             {
                 var percentage = Int32.Parse(sometimes500.Value);
                 Printer.PrintInfo($"{percentage}% chance the recorded status code will be replaced with 500");
                 var random = new Random();
-                var randomNumber = random.Next(0, 101); //0-100?
-                if (percentage <= randomNumber)
+                var randomNumber = random.Next(101);
+                if (randomNumber <= percentage)
                 {
-                    Printer.PrintInfo("simulating a 500");
+                    Printer.PrintInfo("simulating a 500 ");
                     return 500;
                 }
             }
