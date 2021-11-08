@@ -75,7 +75,7 @@ public class Mocker
                 var percentage = Int32.Parse(sometimes500.Value);
                 Printer.PrintInfo($"{percentage}% chance the recorded status code will be replaced with 500");
                 var random = new Random();
-                var randomNumber = random.Next(101);
+                var randomNumber = random.Next(100); // between 0-99
                 if (randomNumber <= percentage)
                 {
                     Printer.PrintInfo("simulating a 500");
