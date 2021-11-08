@@ -47,7 +47,7 @@ const getAlLCakesResponseAgain = await fetch(`${baseUrl}/cakes`, {
   method: "GET",
 });
 if (getAlLCakesResponseAgain.status !== 200) {
-  console.log(`getAlLCakesResponseAgain received status code ${getAllCakesResponse.status}, which is OK since we simulated this with SimulatedConditions, see contract`)
+  console.log(`getAlLCakesResponseAgain received status code ${getAlLCakesResponseAgain.status}, which is OK since we simulated this with SimulatedConditions, see contract`)
 } else {
   console.log("getAlLCakesResponseAgain req succeeded");
 }

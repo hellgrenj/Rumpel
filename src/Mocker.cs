@@ -42,12 +42,10 @@ public class Mocker
                 await Respond(context, String.Empty, trans.SimulatedConditions);
 
             AddHeaders(context, trans);
-
             if (HttpMethods.IsPost(trans.Request.Method) ||
                 HttpMethods.IsPut(trans.Request.Method) ||
                 HttpMethods.IsPatch(trans.Request.Method))
             {
-
                 var (requestBodyOk, requestBodyErrors) = await ValidateRequestBody(context, trans);
                 if (!requestBodyOk)
                 {
@@ -98,7 +96,6 @@ public class Mocker
         {
             context.Response.Headers[header.Key] = header.Value.ToArray<string>();
         }
-        // removing hop-by-hop-headers https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers#hbh
         context.Response.Headers.Remove("transfer-encoding");
     }
     private async Task<(bool, List<string>)> ValidateRequestBody(HttpContext context, Transaction trans)
@@ -153,7 +150,7 @@ public class Mocker
                 var minDelay = Int32.Parse(split[0]);
                 var maxDelay = Int32.Parse(split[1]);
                 var random = new Random();
-                var delayInMilliseconds = random.Next(minDelay, maxDelay + 1);
+                var delayInMilliseconds = random.Next(minDelay, maxDelay);
                 Printer.PrintInfo($"simulating a random delay of {delayInMilliseconds} milliseconds");
                 Thread.Sleep(delayInMilliseconds);
             }
