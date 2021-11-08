@@ -80,7 +80,7 @@ public class Mocker
                 var randomNumber = random.Next(101);
                 if (randomNumber <= percentage)
                 {
-                    Printer.PrintInfo("simulating a 500 ");
+                    Printer.PrintInfo("simulating a 500");
                     return 500;
                 }
             }
