@@ -138,7 +138,7 @@ public class Mocker
             }
             catch
             {
-                Printer.PrintErr($"could not parse wait time in Value for FixedDelay");
+                Printer.PrintErr($"could not parse delay in Value for FixedDelay");
             }
         }
         var randomDelay = simulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.RandomDelay);
@@ -156,7 +156,7 @@ public class Mocker
             }
             catch
             {
-                Printer.PrintErr($"could not parse wait time range in Value for RandomDelay. Expecting min-max, e.g 100-2000");
+                Printer.PrintErr($"could not parse delay min-max range in Value for RandomDelay. Expecting min-max in milliseconds, e.g 100-2000");
             }
 
         }
