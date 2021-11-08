@@ -48,8 +48,8 @@ The expected arguments are: --verify-contract|-v --contract-path=<path> (ignore 
 (ignore flags, bearer token and base url are optional)  
 
 --mock-provider (or the shorthand -m): This mocks a provider based on a contract.
-The expected arguments are: --mock-provider|-m --contract-path=<path>
-";
+The expected arguments are: --mock-provider|-m --contract-path=<path>";
+
         var ignoreFlagsInfo = @"ignoreFlags = 
 
 The verifyer can be told to ignore specific assertions. 
@@ -57,6 +57,12 @@ Example with ignore flags:
 --verify-contract|-v --contract-path=<path> --ignore-assert-status-code
 
 These are the available ignoreFlags:";
+
+        var readMoreInfo = @"
+
+You can customize the verification (per transaction) when verifying a contract as well as 
+simulate different conditions when mocking a provider. 
+Read about this and more at https://github.com/hellgrenj/Rumpel";
 
 
 
@@ -67,6 +73,10 @@ These are the available ignoreFlags:";
         Console.WriteLine(info);
         Console.WriteLine(ignoreFlagsInfo);
         IgnoreFlags.ToList().ForEach(f => Console.WriteLine(f));
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine(readMoreInfo);
+         Console.ResetColor();
+
     }
 
 
