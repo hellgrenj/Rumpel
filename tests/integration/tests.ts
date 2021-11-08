@@ -176,7 +176,7 @@ contract.Transactions.filter((t: any) =>
 ).forEach((t: any) => {
   t.SimulatedConditions.push({
     Type: "Sometimes500",
-    Value: "67",
+    Value: "35",
   });
   t.SimulatedConditions.push({
     Type: "FixedDelay",
