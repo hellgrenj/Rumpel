@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Rumpel.Models;
@@ -30,7 +29,7 @@ public class Verifier
         if (!String.IsNullOrEmpty(url))
         {
             Printer.PrintInfo($"overriding recorded url {contract.URL} with {url}");
-            contract.URL = url;
+            _contract = contract with { URL = url };
         }
     }
     public async Task<bool> Verify()

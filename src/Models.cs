@@ -26,13 +26,7 @@ namespace Rumpel.Models
             return ToList().Contains(flag);
         }
     }
-    public class Contract
-    {
-        public string Name { get; set; }
-        public string URL { get; set; }
-        public List<Transaction> Transactions { get; set; } = new();
-
-    }
+    public record Contract(string Name, string URL, List<Transaction> Transactions);
     public class Transaction
     {
         public Request Request { get; set; }
@@ -70,12 +64,7 @@ namespace Rumpel.Models
             }
         }
     }
-    public class Customization
-    {
-        public string PropertyName { get; set; }
-        public int Depth { get; set; }
-        public string Action { get; set; }
-    }
+    public record Customization(string PropertyName, int Depth, string Action);
     public class CustomizationActions
     {
         public const string IgnoreObjectProperty = "IgnoreObjectProperty";

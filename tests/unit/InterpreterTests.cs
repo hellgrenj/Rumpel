@@ -110,12 +110,7 @@ namespace unit
 
             var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new()
             {
-                new Customization()
-                {
-                    Action = CustomizationActions.IgnoreObjectProperty,
-                    PropertyName = "age",
-                    Depth = 0
-                }
+                new("age", 0, CustomizationActions.IgnoreObjectProperty)
             });
             Assert.True(isValid);
             Assert.Empty(errorMessages);
@@ -136,12 +131,7 @@ namespace unit
             }";
             var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new()
             {
-                new()
-                {
-                    Action = CustomizationActions.CompareObjectPropertyValues,
-                    PropertyName = "nickname",
-                    Depth = 0
-                }
+                new Customization("nickname", 0, CustomizationActions.CompareObjectPropertyValues)               
             });
 
             Assert.False(isValid);
@@ -276,21 +266,9 @@ namespace unit
             var jsonString = JsonSerializer.Serialize(complexObject);
 
             var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new() {
-                new() {
-                    PropertyName = "prop13",
-                    Action = CustomizationActions.CompareObjectPropertyValues,
-                    Depth = 1
-                },
-                new() {
-                    PropertyName = "prop14",
-                    Action = CustomizationActions.CompareObjectPropertyValues,
-                    Depth = 1
-                },
-                new() {
-                    PropertyName = "prop15",
-                    Action = CustomizationActions.CompareObjectPropertyValues,
-                    Depth = 1
-                }
+                new("prop13", 1, CustomizationActions.CompareObjectPropertyValues),
+                new("prop14", 1, CustomizationActions.CompareObjectPropertyValues),
+                new("prop15", 1, CustomizationActions.CompareObjectPropertyValues)
             });
 
             Assert.False(isValid);
