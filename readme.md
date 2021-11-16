@@ -94,10 +94,10 @@ You can simulate conditions per transaction when mocking a provider by manually 
 ## Develop 
 
 You need the following installed on your dev machine:  
-* dotnet 5.x
+* dotnet 6.x
 * docker 20.10.x
 * docker-compose 1.29.x
-* deno 1.13.2
+* deno 1.15.x
 
 ### tests
 There are both unit tests and integration tests. Check the ./tests folder.    

@@ -7,7 +7,13 @@ const getAllCakesResponse = await fetch(`${baseUrl}/cakes`, {
   method: "GET",
 });
 if (getAllCakesResponse.status !== 200) {
-  console.log(`getAllCakes received status code ${getAllCakesResponse.status}, which is OK since we simulated this with SimulatedConditions, see contract`)
+  if (getAllCakesResponse.status === 500) {
+    console.log(
+      `getAllCakes received status code 500, which is OK since we simulated this with SimulatedConditions, see contract`,
+    );
+  } else {
+    throw new Error("getAllCakes req failed");
+  }
 } else {
   console.log("getAllCakes req succeeded");
 }
@@ -47,7 +53,13 @@ const getAlLCakesResponseAgain = await fetch(`${baseUrl}/cakes`, {
   method: "GET",
 });
 if (getAlLCakesResponseAgain.status !== 200) {
-  console.log(`getAlLCakesResponseAgain received status code ${getAlLCakesResponseAgain.status}, which is OK since we simulated this with SimulatedConditions, see contract`)
+  if (getAlLCakesResponseAgain.status === 500) {
+    console.log(
+      `getAlLCakesResponseAgain received status code 500, which is OK since we simulated this with SimulatedConditions, see contract`,
+    );
+  } else {
+    throw new Error("getAlLCakesResponseAgain req failed");
+  }
 } else {
   console.log("getAlLCakesResponseAgain req succeeded");
 }
@@ -95,12 +107,15 @@ if (getSingleCakeByIdResponse.status !== 200) {
   console.log("getSingleCakeByIdResponse req succeeded");
 }
 
-const getSingleCakeByQueryParamResponse = await fetch(`${baseUrl}/cakeByQuery?id=1`, {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
+const getSingleCakeByQueryParamResponse = await fetch(
+  `${baseUrl}/cakeByQuery?id=1`,
+  {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   },
-});
+);
 if (getSingleCakeByQueryParamResponse.status !== 200) {
   throw new Error("getSingleCakeByQueryParamResponse request failed");
 } else {

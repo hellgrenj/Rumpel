@@ -104,7 +104,7 @@ public class Recorder
     private async Task SaveTransaction(Transaction trans)
     {
         _contract.Transactions.Add(trans);
-        string jsonString = JsonSerializer.Serialize(_contract, new() { WriteIndented = true });
+        string jsonString = JsonSerializer.Serialize(_contract, new JsonSerializerOptions() { WriteIndented = true });
         var filePath = $"./contracts/{_contract.Name}.rumpel.contract.json";
         var file = new System.IO.FileInfo(filePath);
         file.Directory.Create(); // if it doesnt exist.. else this will be a NoOp
