@@ -46,7 +46,7 @@ async Task RecordContract(string[] args)
     if (!targetApiExtracted)
         ExitWithArgumentMissingOrInvalid(argumentName: "target api", targetApiPrefix, expectedInput: "url");
 
-    var contract = new Contract(contractName, targetApi, new());
+    var contract = new Contract() { Name = contractName, URL = targetApi };
     var recorder = new Recorder(contract);
     await recorder.Record();
 }

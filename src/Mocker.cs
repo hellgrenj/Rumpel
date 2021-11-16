@@ -13,8 +13,9 @@ using Rumpel.Models;
 public class Mocker
 {
     private Contract _contract;
-    public Mocker(Contract contract) => _contract = contract;
     private static Random random = new();
+    public Mocker(Contract contract) => _contract = contract;
+
     public async Task Run()
     {
         Printer.PrintInfo($"mocking provider for contract {_contract.Name}");

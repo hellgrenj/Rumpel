@@ -26,7 +26,12 @@ namespace Rumpel.Models
             return ToList().Contains(flag);
         }
     }
-    public record Contract(string Name, string URL, List<Transaction> Transactions);
+    public record Contract
+    {
+        public string Name { get; init; }
+        public string URL { get; init; }
+        public List<Transaction> Transactions { get; init; } = new();
+    }
     public class Transaction
     {
         public Request Request { get; set; }
