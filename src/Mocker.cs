@@ -1,15 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Rumpel.Models;
-
 public class Mocker
 {
     private Contract _contract;
@@ -70,7 +59,6 @@ public class Mocker
         var sometimes500 = trans.SimulatedConditions.Find(sc => sc.Type == SimulatedConditionTypes.Sometimes500);
         if (sometimes500 is not null)
         {
-
             try
             {
                 var percentage = Int32.Parse(sometimes500.Value);

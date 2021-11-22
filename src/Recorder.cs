@@ -1,13 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json;
-using System.IO;
-using System.Text;
-using System.Net.Http;
-using System.Linq;
-using Rumpel.Models;
-
 public class Recorder
 {
     private static HttpClient _httpClient = new HttpClient();
@@ -21,7 +11,7 @@ public class Recorder
     }
     async Task ProxyHandler(HttpContext context)
     {
-        // this transaction will capture request info and response info
+        
         var trans = await InitiateNewTransaction(context);
 
         using var outboundRequest = InitiateOutboundRequest(trans);
@@ -32,7 +22,6 @@ public class Recorder
         await SaveTransaction(trans);
         await CopyHeadersAndContentFromResponse(context, responseMessage);
 
-        // return the response to the caller
         await context.Response.CompleteAsync();
     }
 
@@ -84,7 +73,7 @@ public class Recorder
             {
                 requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray<string>());
             }
-            if (header.Key == "Authorization") // we are not recording bearer tokens, we pass them in when validating..
+            if (header.Key == "Authorization") // we are not recording bearer tokens, we pass them in when verifying..
                 continue;
 
             trans.Request.Headers.Add(header.Key, header.Value);

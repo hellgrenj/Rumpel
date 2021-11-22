@@ -1,6 +1,3 @@
-using System;
-using Rumpel.Models;
-
 public static class Printer
 {
     public static void PrintInfo(string msg)
@@ -65,7 +62,6 @@ simulate different conditions when mocking a provider.
 Read about this and more at https://github.com/hellgrenj/Rumpel";
 
 
-
         Console.ForegroundColor = ConsoleColor.DarkYellow;
         Console.WriteLine(header);
         Console.WriteLine(subHeader);
@@ -75,9 +71,6 @@ Read about this and more at https://github.com/hellgrenj/Rumpel";
         IgnoreFlags.ToList().ForEach(f => Console.WriteLine(f));
         Console.ForegroundColor = ConsoleColor.DarkYellow;
         Console.WriteLine(readMoreInfo);
-         Console.ResetColor();
-
+        Console.ResetColor();
     }
-
-
 }

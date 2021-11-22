@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using Rumpel.Models;
-
 public static class Interpreter
 {
-    public static (bool, List<string>) InferSchemaAndValidate(string jsonString, string expectedJsonString, List<string> ignoreFlags, List<Customization> customizations)
+    public static (bool, List<string>) InferSchemaAndValidate(string jsonString, string expectedJsonString,
+    List<string> ignoreFlags, List<Customization> customizations)
     {
         var isValid = true;
         var errorMessages = new List<string>();
@@ -38,7 +34,8 @@ public static class Interpreter
         return (isValid, errorMessages);
     }
 
-    private static (bool, List<string>) AssertArray(JsonElement expectedJson, JsonElement json, List<string> ignoreFlags, List<Customization> customizations, int nestedDepth = 0, string nestedInParentType = null)
+    private static (bool, List<string>) AssertArray(JsonElement expectedJson, JsonElement json, List<string> ignoreFlags,
+    List<Customization> customizations, int nestedDepth = 0, string nestedInParentType = null)
     {
         var isValid = true;
         var errorMessages = new List<string>();
@@ -61,7 +58,8 @@ public static class Interpreter
             else if (expectedJson[i].ValueKind.ToString() == JsonValueKind.Object.ToString())
             {
                 var nextLevel = nestedDepth + 1;
-                var (objectPropertiesOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson[i].GetRawText(), json[i].GetRawText(), ignoreFlags, customizations, nextLevel, "array");
+                var (objectPropertiesOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson[i].GetRawText(), json[i].GetRawText(),
+                ignoreFlags, customizations, nextLevel, "array");
                 isValid = objectPropertiesOk ? isValid : false;
                 errorMessages.AddRange(objectPropertiesErrors);
             }
@@ -87,8 +85,8 @@ public static class Interpreter
         return (isValid, errorMessages);
     }
 
-    private static (bool, List<string>) AssertObjectProperties(string expectedJsonString, string jsonString, List<string> ignoreFlags, List<Customization> customizations, int nestedDepth = 0,
-    string nestedInParentType = null)
+    private static (bool, List<string>) AssertObjectProperties(string expectedJsonString, string jsonString,
+    List<string> ignoreFlags, List<Customization> customizations, int nestedDepth = 0, string nestedInParentType = null)
     {
         var isValid = true;
         var errorMessages = new List<string>();
@@ -109,7 +107,8 @@ public static class Interpreter
             else if (jsonObj[key].ValueKind == JsonValueKind.Object)
             {
                 var nextLevel = nestedDepth + 1;
-                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), jsonObj[key].GetRawText(), ignoreFlags, customizations, nextLevel, "object");
+                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), jsonObj[key].GetRawText(),
+                ignoreFlags, customizations, nextLevel, "object");
                 isValid = nestedObjectPropertiesOk ? isValid : false;
                 errorMessages.AddRange(nestedObjectPropertiesErrors);
             }
