@@ -1,4 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Rumpel.Models;
+
 public class Verifier
 {
     private static HttpClient _httpClient = new HttpClient();

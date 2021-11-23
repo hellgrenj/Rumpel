@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using Rumpel.Models;
+
 public static class Interpreter
 {
     public static (bool, List<string>) InferSchemaAndValidate(string jsonString, string expectedJsonString,
@@ -16,7 +21,8 @@ public static class Interpreter
         switch (expectedJson.ValueKind)
         {
             case JsonValueKind.Object:
-                var (objectOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson.GetRawText(), json.GetRawText(), ignoreFlags, customizations);
+                var (objectOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson.GetRawText(), json.GetRawText(), 
+                ignoreFlags, customizations);
                 isValid = objectOk ? isValid : false;
                 errorMessages.AddRange(objectPropertiesErrors);
                 break;
@@ -107,7 +113,8 @@ public static class Interpreter
             else if (jsonObj[key].ValueKind == JsonValueKind.Object)
             {
                 var nextLevel = nestedDepth + 1;
-                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), jsonObj[key].GetRawText(),
+                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), 
+                jsonObj[key].GetRawText(),
                 ignoreFlags, customizations, nextLevel, "object");
                 isValid = nestedObjectPropertiesOk ? isValid : false;
                 errorMessages.AddRange(nestedObjectPropertiesErrors);

@@ -1,3 +1,13 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Rumpel.Models;
+
 public class Recorder
 {
     private static HttpClient _httpClient = new HttpClient();

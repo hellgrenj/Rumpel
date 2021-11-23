@@ -1,4 +1,13 @@
-﻿if (args.Length == 0)
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Rumpel.Models;
+
+if (args.Length == 0)
 {
     Printer.PrintHelp();
     Environment.Exit(0);

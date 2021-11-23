@@ -1,3 +1,6 @@
+using System;
+using Rumpel.Models;
+
 public static class Printer
 {
     public static void PrintInfo(string msg)
