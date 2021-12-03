@@ -20,7 +20,7 @@ curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.4.1/rum
 sudo install rumpel /usr/local/bin/
 ```
 **win x64**  
-download the [latest exe](https://github.com/hellgrenj/Rumpel/releases/download/v0.4.1rumpel-win-x64.exe), rename it ``rumpel.exe`` and put it in your PATH. 
+download the [latest exe](https://github.com/hellgrenj/Rumpel/releases/download/v0.4.1/rumpel-win-x64.exe), rename it ``rumpel.exe`` and put it in your PATH. 
 
 **Docker**:   
 https://hub.docker.com/r/hellgrenj/rumpel.  
