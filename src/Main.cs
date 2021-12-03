@@ -25,7 +25,6 @@ switch (args[0])
     case "--mock-provider":
     case "-m": await MockProvider(); break;
     default: Printer.PrintErr($"unknown argument {args[0]}"); Environment.Exit(1); break;
-
 }
 
 async Task RecordContract()
