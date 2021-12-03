@@ -17,24 +17,20 @@ switch (args[0])
 {
     case "--help":
     case "-h": Printer.PrintHelp(); break;
-    case "--version": Printer.PrintInfo("Rumpel v0.4.0"); break;
+    case "--version": Printer.PrintInfo("Rumpel v0.4.1"); break;
     case "--record-contract":
-    case "-r": await RecordContract(args); break;
+    case "-r": await RecordContract(); break;
     case "--verify-contract":
-    case "-v": await VerifyContract(args); break;
+    case "-v": await VerifyContract(); break;
     case "--mock-provider":
-    case "-m": await MockProvider(args); break;
+    case "-m": await MockProvider(); break;
     default: Printer.PrintErr($"unknown argument {args[0]}"); Environment.Exit(1); break;
 
 }
 
-async Task RecordContract(string[] args)
+async Task RecordContract()
 {
-    if (args.Length < 3)
-    {
-        Printer.PrintErr("missing arguments, expecting: --record-contract|-r --contract-name=<name> --target-api=<url>");
-        Environment.Exit(1);
-    }
+    ValidateArgs(expectedLength: 3, expecting: "--record-contract|-r --contract-name=<name> --target-api=<url>");
 
     var contractNamePrefix = "--contract-name=";
     var (contractName, contractNameExtracted) = TryExtractSetting(args, contractNamePrefix);
@@ -50,32 +46,14 @@ async Task RecordContract(string[] args)
     var recorder = new Recorder(contract);
     await recorder.Record();
 }
-async Task VerifyContract(string[] args)
+async Task VerifyContract()
 {
-    if (args.Length < 2)
-    {
-        Printer.PrintErr("missing arguments, expecting: --verify-contract|-v --contract=<path> (ignore-flags) (--bearer-token=<token>)");
-        Environment.Exit(1);
-    }
-
-    var contractPathPrefix = "--contract-path=";
-    var (contractPath, contractPathExtracted) = TryExtractSetting(args, contractPathPrefix);
-    if (!contractPathExtracted)
-        ExitWithArgumentMissingOrInvalid(argumentName: "contract path", contractPathPrefix, expectedInput: "path");
+    ValidateArgs(expectedLength: 2, expecting: "--verify-contract|-v --contract-path=<path> (ignore-flags) (--bearer-token=<token>)");
 
     var (bearerToken, _) = TryExtractSetting(args, prefix: "--bearer-token=");
     var (baseUrl, _) = TryExtractSetting(args, prefix: "--base-url=");
 
-    Contract contract = null;
-    try
-    {
-        contract = JsonSerializer.Deserialize<Contract>(File.ReadAllText(contractPath, Encoding.UTF8));
-    }
-    catch (Exception ex)
-    {
-        Printer.PrintErr($"could not parse the provided contract: \n {ex.Message}");
-        Environment.Exit(1);
-    }
+    var contract = TryParseContract();
     var ignoreFlags = ExtractIgnoreFlags(args);
     var verifier = new Verifier(contract, ignoreFlags, bearerToken, baseUrl);
 
@@ -89,15 +67,24 @@ async Task VerifyContract(string[] args)
         Printer.PrintErr($"\nContract test failed! (contract: {contract.Name})".ToUpper());
         Environment.Exit(1);
     }
-
 }
-async Task MockProvider(string[] args)
+async Task MockProvider()
 {
-    if (args.Length < 2)
+    ValidateArgs(expectedLength: 2, expecting: "--mock-provider|-m --contract-path=<path>");
+    var contract = TryParseContract();
+    var mocker = new Mocker(contract);
+    await mocker.Run();
+}
+void ValidateArgs(int expectedLength, string expecting)
+{
+    if (args.Length < expectedLength)
     {
-        Printer.PrintErr("missing arguments, expecting: --mock-provider|-m --contract=<path>");
+        Printer.PrintErr($"missing arguments, expecting: {expecting}");
         Environment.Exit(1);
     }
+}
+Contract TryParseContract()
+{
     var contractPathPrefix = "--contract-path=";
     var (contractPath, contractPathExtracted) = TryExtractSetting(args, contractPathPrefix);
     if (!contractPathExtracted)
@@ -113,10 +100,7 @@ async Task MockProvider(string[] args)
         Printer.PrintErr($"could not parse the provided contract: \n {ex.Message}");
         Environment.Exit(1);
     }
-
-    var mocker = new Mocker(contract);
-    await mocker.Run();
-
+    return contract;
 }
 (string, bool) TryExtractSetting(string[] args, string prefix)
 {
