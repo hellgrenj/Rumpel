@@ -54,14 +54,14 @@ public static class Interpreter
             if (json.GetArrayLength() < (i + 1))
                 continue;
 
-            if (json[i].ValueKind.ToString() == JsonValueKind.Array.ToString())
+            if (json[i].ValueKind == JsonValueKind.Array)
             {
                 var nextLevel = nestedDepth + 1;
                 var (nestedArrayOk, nestedArrayErrors) = AssertArray(expectedJson[i], json[i], ignoreFlags, customizations, nextLevel, "array");
                 isValid = nestedArrayOk ? isValid : false;
                 errorMessages.AddRange(nestedArrayErrors);
             }
-            else if (json[i].ValueKind.ToString() == JsonValueKind.Object.ToString())
+            else if (json[i].ValueKind == JsonValueKind.Object)
             {
                 var nextLevel = nestedDepth + 1;
                 var (objectPropertiesOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson[i].GetRawText(), json[i].GetRawText(),
@@ -105,7 +105,7 @@ public static class Interpreter
                 if (!CustomizedTo(CustomizationActions.IgnoreObjectProperty, customizations, key, nestedDepth))
                 {
                     isValid = false;
-                    var errorMessage = $"Object missing property {key} of type {expectedJsonObj[key].ValueKind.ToString()}";
+                    var errorMessage = $"Object missing property {key} of type {expectedJsonObj[key].ValueKind}";
                     errorMessage = AddNestedInfoIfNested(nestedDepth, nestedInParentType, errorMessage);
                     errorMessages.Add(errorMessage);
                 }
@@ -126,14 +126,14 @@ public static class Interpreter
                 isValid = arrayOk ? isValid : false;
                 errorMessages.AddRange(arrayErrors);
             }
-            else if (jsonObj[key].ValueKind.ToString() != expectedJsonObj[key].ValueKind.ToString())
+            else if (jsonObj[key].ValueKind != expectedJsonObj[key].ValueKind)
             {
                 isValid = false;
-                var errorMessage = $"property with name {key} is {jsonObj[key].ValueKind.ToString()} and expected type is {expectedJsonObj[key].ValueKind.ToString()}";
+                var errorMessage = $"property with name {key} is {jsonObj[key].ValueKind} and expected type is {expectedJsonObj[key].ValueKind}";
                 errorMessage = AddNestedInfoIfNested(nestedDepth, nestedInParentType, errorMessage);
                 errorMessages.Add(errorMessage);
             }
-            else if (jsonObj[key].ValueKind.ToString() == expectedJsonObj[key].ValueKind.ToString()
+            else if (jsonObj[key].ValueKind == expectedJsonObj[key].ValueKind
             && CustomizedTo(CustomizationActions.CompareObjectPropertyValues, customizations, key, nestedDepth))
             {
                 var (propertyValueOk, propertyValueErrors) = AssertPropertyValue(key, expectedJsonObj, jsonObj, nestedDepth, nestedInParentType);
@@ -148,10 +148,10 @@ public static class Interpreter
     {
         var isValid = true;
         var errorMessages = new List<string>();
-        if (json.ValueKind.ToString() != expectedJson.ValueKind.ToString())
+        if (json.ValueKind != expectedJson.ValueKind)
         {
             isValid = false;
-            var errorMessage = $"expected single value of type {expectedJson.ValueKind.ToString()} but it was {json.ValueKind.ToString()}";
+            var errorMessage = $"expected single value of type {expectedJson.ValueKind} but it was {json.ValueKind}";
             errorMessage = AddNestedInfoIfNested(nestedDepth, nestedInParentType, errorMessage);
             errorMessages.Add(errorMessage);
         }
