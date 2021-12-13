@@ -21,7 +21,7 @@ public static class Interpreter
         switch (expectedJson.ValueKind)
         {
             case JsonValueKind.Object:
-                var (objectOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson.GetRawText(), json.GetRawText(), 
+                var (objectOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson.GetRawText(), json.GetRawText(),
                 ignoreFlags, customizations);
                 isValid = objectOk ? isValid : false;
                 errorMessages.AddRange(objectPropertiesErrors);
@@ -48,20 +48,22 @@ public static class Interpreter
         var (arrayLengthOk, arrayLengthErrors) = AssertJsonArrayLength(expectedJson, json, ignoreFlags);
         isValid = arrayLengthOk ? isValid : false;
         errorMessages.AddRange(arrayLengthErrors);
-
-        if (json.GetArrayLength() <= 0 && expectedJson.GetArrayLength() <= 0)
+        if (!arrayLengthOk && json.GetArrayLength() < expectedJson.GetArrayLength()) // array received is shorter than expected no need to continue validation
             return (isValid, errorMessages);
 
         for (var i = 0; i < expectedJson.GetArrayLength(); i++)
         {
-            if (expectedJson[i].ValueKind.ToString() == JsonValueKind.Array.ToString())
+            if (ignoreFlags.Contains(IgnoreFlags.IgnoreAssertArrayLength) && json.GetArrayLength() < (i + 1)) // skip missing items when ignoring array length
+                continue;
+
+            if (json[i].ValueKind.ToString() == JsonValueKind.Array.ToString())
             {
                 var nextLevel = nestedDepth + 1;
                 var (nestedArrayOk, nestedArrayErrors) = AssertArray(expectedJson[i], json[i], ignoreFlags, customizations, nextLevel, "array");
                 isValid = nestedArrayOk ? isValid : false;
                 errorMessages.AddRange(nestedArrayErrors);
             }
-            else if (expectedJson[i].ValueKind.ToString() == JsonValueKind.Object.ToString())
+            else if (json[i].ValueKind.ToString() == JsonValueKind.Object.ToString())
             {
                 var nextLevel = nestedDepth + 1;
                 var (objectPropertiesOk, objectPropertiesErrors) = AssertObjectProperties(expectedJson[i].GetRawText(), json[i].GetRawText(),
@@ -113,7 +115,7 @@ public static class Interpreter
             else if (jsonObj[key].ValueKind == JsonValueKind.Object)
             {
                 var nextLevel = nestedDepth + 1;
-                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(), 
+                var (nestedObjectPropertiesOk, nestedObjectPropertiesErrors) = AssertObjectProperties(expectedJsonObj[key].GetRawText(),
                 jsonObj[key].GetRawText(),
                 ignoreFlags, customizations, nextLevel, "object");
                 isValid = nestedObjectPropertiesOk ? isValid : false;

@@ -131,7 +131,7 @@ namespace unit
             }";
             var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new()
             {
-                new Customization("nickname", 0, CustomizationActions.CompareObjectPropertyValues)               
+                new Customization("nickname", 0, CustomizationActions.CompareObjectPropertyValues)
             });
 
             Assert.False(isValid);
@@ -224,6 +224,48 @@ namespace unit
         }
 
         [Fact]
+        public void InferSchemaAndValidate_returns_false_if_nested_array_length_is_shorter_than_expected()
+        {
+            var expected = new
+            {
+                prop1 = new ArrayList() { "one", "two", "three" }
+            };
+            var actual = new
+            {
+                prop1 = new ArrayList() { "uno", "dos" }
+            };
+            var expectedJsonString = JsonSerializer.Serialize(expected);
+            var jsonString = JsonSerializer.Serialize(actual);
+
+            var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new());
+
+            Assert.False(isValid);
+            Assert.Equal(1, errorMessages.Count);
+
+            Assert.Contains("Expected array to have length 3 but it was 2", errorMessages[0]);
+        }
+
+        [Fact]
+        public void InferSchemaAndValidate_returns_true_if_nested_array_length_is_shorter_than_expected_but_ignoreArrayLength()
+        {
+            var expected = new
+            {
+                prop1 = new ArrayList() { "one", "two", "three" }
+            };
+            var actual = new
+            {
+                prop1 = new ArrayList() { "one", "two" }
+            };
+            var expectedJsonString = JsonSerializer.Serialize(expected);
+            var jsonString = JsonSerializer.Serialize(actual);
+
+            var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>() {"--ignore-assert-array-length" }, new());
+
+            Assert.True(isValid);
+            Assert.Equal(0, errorMessages.Count);
+        }
+
+        [Fact]
         public void InferSchemaAndValidate_can_infer_schema_and_validate_complex_json()
         {
 
@@ -265,7 +307,8 @@ namespace unit
             var expectedJsonString = JsonSerializer.Serialize(complexObjectExpected);
             var jsonString = JsonSerializer.Serialize(complexObject);
 
-            var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new() {
+            var (isValid, errorMessages) = Interpreter.InferSchemaAndValidate(jsonString, expectedJsonString, new List<string>(), new()
+            {
                 new("prop13", 1, CustomizationActions.CompareObjectPropertyValues),
                 new("prop14", 1, CustomizationActions.CompareObjectPropertyValues),
                 new("prop15", 1, CustomizationActions.CompareObjectPropertyValues)
@@ -273,7 +316,7 @@ namespace unit
 
             Assert.False(isValid);
             Assert.Equal(5, errorMessages.Count);
-            
+
             Assert.Contains("property with name prop13 has the value \"hejsan\" and the expected value is \"hej\" in a nested object (depth 1)", errorMessages[0]);
             Assert.Contains("property with name prop14 has the value 6 and the expected value is 5 in a nested object (depth 1)", errorMessages[1]);
             Assert.Contains("property with name prop15 has the value", errorMessages[2]);
