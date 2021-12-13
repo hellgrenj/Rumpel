@@ -17,7 +17,7 @@ switch (args[0])
 {
     case "--help":
     case "-h": Printer.PrintHelp(); break;
-    case "--version": Printer.PrintInfo("Rumpel v0.4.1"); break;
+    case "--version": Printer.PrintInfo("Rumpel v0.4.2"); break;
     case "--record-contract":
     case "-r": await RecordContract(); break;
     case "--verify-contract":
