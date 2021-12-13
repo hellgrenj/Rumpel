@@ -48,12 +48,10 @@ public static class Interpreter
         var (arrayLengthOk, arrayLengthErrors) = AssertJsonArrayLength(expectedJson, json, ignoreFlags);
         isValid = arrayLengthOk ? isValid : false;
         errorMessages.AddRange(arrayLengthErrors);
-        if (!arrayLengthOk && json.GetArrayLength() < expectedJson.GetArrayLength()) // array received is shorter than expected no need to continue validation
-            return (isValid, errorMessages);
 
         for (var i = 0; i < expectedJson.GetArrayLength(); i++)
         {
-            if (ignoreFlags.Contains(IgnoreFlags.IgnoreAssertArrayLength) && json.GetArrayLength() < (i + 1)) // skip missing items when ignoring array length
+            if (json.GetArrayLength() < (i + 1))
                 continue;
 
             if (json[i].ValueKind.ToString() == JsonValueKind.Array.ToString())
