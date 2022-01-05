@@ -2,8 +2,6 @@
 ## Simple, opinionated and automated consumer-driven contract testing for your JSON API's
 
 
-![./img/rumpel.jpeg](./img/rumpel.jpeg)
-
 ## Install  
 
 copy+paste one of the following commands in your terminal.
