@@ -72,7 +72,7 @@ You can customize the verification per transaction by manually adding Customizat
 3. **Mock a provider/API**  
 ``rumpel --mock-provider --contract-path=./contracts/msA-msB.rumpel.contract.json``   
 ![./img/mocking.jpg](./img/mocking.jpg)  
-This can be used in local dev environments to mock dependencies, see ./tests/integration for an example of how to do this with docker-compose or the repository [artlab](https://github.com/hellgrenj/artlab) for an example of how to do this with Skaffold.   
+This can be used in local dev environments to mock dependencies, see ./tests/integration for an example of how to do this with docker-compose or the repository [artlab](https://github.com/hellgrenj/artlab) for an example of how to do this with Skaffold. You can also mock services in different k8s-clusters with this (experimental) helm chart: https://github.com/hellgrenj/charts/tree/main/rumpel-mock#install-and-test  
 Rumpel listens on port 8181 or the number set in the environment variable **RUMPEL_PORT**.    
 In this mode Rumpel validates the requests sent by the consumer.  
 **screenshot**  
