@@ -23,6 +23,9 @@ download the [latest exe](https://github.com/hellgrenj/Rumpel/releases/download/
 **Docker**:   
 https://hub.docker.com/r/hellgrenj/rumpel.  
 
+**Helm (Experimental!)**:   
+https://github.com/hellgrenj/charts/tree/main/rumpel-mock#install-and-test  
+(only for mocking services right now..)
 
 ## Use
 
