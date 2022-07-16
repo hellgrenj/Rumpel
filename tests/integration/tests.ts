@@ -104,7 +104,7 @@ console.log(
   ),
 );
 const contract = JSON.parse(
-  Deno.readTextFileSync("./contracts/consumer-api.rumpel.contract.json"),
+  Deno.readTextFileSync("./contracts/consumer-api.rumpel.contract.json").trim(),
 );
 contract.Transactions.filter((t: any) =>
   t.Request.Path == "/cakes/1" && t.Request.Method == "GET"
