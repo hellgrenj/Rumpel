@@ -12,9 +12,9 @@ curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.4.2/rum
 sudo install rumpel /usr/local/bin/
 ```
 
-**macOS x64**
+**macOS arm64**
 ```
-curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.4.2/rumpel-osx-x64 && \
+curl -Lo rumpel https://github.com/hellgrenj/Rumpel/releases/download/v0.4.2/rumpel-macos-arm64 && \
 sudo install rumpel /usr/local/bin/
 ```
 **win x64**  
